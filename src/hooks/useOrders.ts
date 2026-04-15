@@ -30,11 +30,11 @@ export function useOrders() {
 
     try {
       // Automatic collection discovery
-      let ordersRef = collection(db, "order");
+      let ordersRef = collection(db, "orders");
       const checkSnap = await getDocs(query(ordersRef, limit(1)));
-      if (checkSnap.empty) {
-        ordersRef = collection(db, "orders");
-      }
+      // if (checkSnap.empty) {
+      //   ordersRef = collection(db, "orders");
+      // }
 
       let q = query(
         ordersRef, 

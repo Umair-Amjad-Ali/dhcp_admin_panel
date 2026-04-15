@@ -10,7 +10,7 @@ export function useAddTechnician(onSuccess: () => void) {
     name: "",
     email: "",
     phone: "",
-    city: "Dubai",
+    city: "",
     skills: [] as string[],
   });
   const [currentSkill, setCurrentSkill] = useState("");
@@ -47,7 +47,7 @@ export function useAddTechnician(onSuccess: () => void) {
       });
 
       toast.success("Specialist Successfully Onboarded");
-      setFormData({ name: "", email: "", phone: "", city: "Dubai", skills: [] });
+      setFormData({ name: "", email: "", phone: "", city: "", skills: [] });
       onSuccess();
     } catch (err) {
       console.error("Staffing Error:", err);

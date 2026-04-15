@@ -19,7 +19,7 @@ export default function OrdersPage() {
   } = useOrders();
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6 pb-2">
       {/* Header Area */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
@@ -108,11 +108,11 @@ export default function OrdersPage() {
                   disabled={loadingMore}
                   className="group flex flex-col items-center gap-2 transition-all active:scale-95"
                 >
-                  <div className="h-12 w-12 rounded-full bg-card-bg border border-border-subtle flex items-center justify-center text-slate-500 group-hover:bg-brand/10 group-hover:text-brand group-hover:border-brand/30 transition-all shadow-xl">
+                  <div className="h-10 w-10 rounded-full bg-card-bg border border-border-subtle flex items-center justify-center text-slate-500 group-hover:bg-brand/10 group-hover:text-brand group-hover:border-brand/30 transition-all shadow-xl">
                     {loadingMore ? (
-                      <RefreshCcw size={20} className="animate-spin text-brand" />
+                      <RefreshCcw size={16} className="animate-spin text-brand" />
                     ) : (
-                      <ChevronDown size={24} className="group-hover:translate-y-0.5 transition-transform" />
+                      <ChevronDown size={20} className="group-hover:translate-y-0.5 transition-transform" />
                     )}
                   </div>
                   <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] group-hover:text-slate-400 transition-all">

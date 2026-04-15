@@ -85,31 +85,46 @@ export default function CustomersPage() {
                   transition={{ delay: idx * 0.03 }}
                   className="group bg-card-bg border border-white/2 rounded-2xl p-4 hover:border-brand/30 transition-all hover:shadow-2xl hover:shadow-brand/5 relative"
                 >
-                   <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-4">
-                      <div className="col-span-4 flex items-center gap-4">
-                         <div className="h-10 w-10 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center text-slate-500 font-black text-xs group-hover:bg-brand group-hover:text-white transition-all shadow-inner">
-                            {user.name?.[0] || 'U'}
-                         </div>
-                         <div className="min-w-0">
-                            <h4 className="text-xs font-black text-white uppercase tracking-tight truncate">{user.name || "Anonymous User"}</h4>
-                            <div className="flex items-center gap-1.5 mt-0.5 text-slate-600">
-                               <Mail size={10} />
-                               <span className="text-[9px] font-bold truncate">{user.email}</span>
+                   <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-4">
+                      {/* Profile Identity Row */}
+                      <div className="col-span-4 w-full flex items-center justify-between lg:justify-start gap-4">
+                         <div className="flex items-center gap-4 min-w-0">
+                            <div className="h-10 w-10 shrink-0 rounded-xl bg-white/3 border border-white/5 flex items-center justify-center text-brand font-black text-xs group-hover:bg-brand group-hover:text-white transition-all shadow-inner">
+                                {user.name?.[0] || 'U'}
                             </div>
+                            <div className="min-w-0">
+                                <h4 className="text-xs font-black text-white uppercase tracking-tight truncate">{user.name || "Anonymous User"}</h4>
+                                <div className="flex items-center gap-1.5 mt-0.5 text-slate-600">
+                                  <Mail size={10} />
+                                  <span className="text-[9px] font-bold truncate">{user.email}</span>
+                                </div>
+                            </div>
+                         </div>
+
+                         {/* Mobile Phone Badge (Hidden on Desktop) */}
+                         <div className="lg:hidden flex items-center gap-1 px-2 py-1 rounded-lg bg-white/2 border border-white/5 text-slate-500">
+                            <Phone size={8} className="text-slate-800" />
+                            <span className="text-[7px] font-black tracking-tighter tabular-nums">{user.phone || "---"}</span>
                          </div>
                       </div>
 
+                      {/* Desktop Contact Column */}
                       <div className="col-span-2 hidden lg:flex items-center gap-2 text-slate-500">
                          <Phone size={12} className="text-slate-800" />
                          <span className="text-[10px] font-black tabular-nums">{user.phone || "---"}</span>
                       </div>
 
-                      <div className="col-span-3 hidden lg:flex items-center gap-6">
-                         <Metric icon={<ShoppingBag size={10} className="text-brand"/>} value={user.totalOrders || 0} label="Total" />
-                         <Metric icon={<CheckCircle2 size={10} className="text-emerald-500"/>} value={user.completedOrders || 0} label="Done" />
-                         <Metric icon={<XCircle size={10} className="text-rose-500"/>} value={user.cancelledOrders || 0} label="Lost" />
+                      {/* Order Statistics Hub (Responsive) */}
+                      <div className="col-span-3 w-full flex items-center justify-between lg:justify-start lg:gap-6 py-3 lg:py-0 border-y border-white/5 lg:border-none my-1 lg:my-0">
+                         <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest">Order Pulse</div>
+                         <div className="flex items-center gap-6">
+                            <Metric icon={<ShoppingBag size={10} className="text-brand"/>} value={user.totalOrders || 0} label="Total" />
+                            <Metric icon={<CheckCircle2 size={10} className="text-emerald-500"/>} value={user.completedOrders || 0} label="Done" />
+                            <Metric icon={<XCircle size={10} className="text-rose-500"/>} value={user.cancelledOrders || 0} label="Lost" />
+                         </div>
                       </div>
 
+                      {/* Registry Date (Desktop Only) */}
                       <div className="col-span-2 hidden lg:flex items-center gap-2 text-slate-600">
                          <Calendar size={12} className="text-slate-800" />
                          <span className="text-[9px] font-black uppercase tracking-widest">
@@ -117,10 +132,11 @@ export default function CustomersPage() {
                          </span>
                       </div>
 
-                      <div className="col-span-1 flex justify-end">
+                      {/* Action Hub */}
+                      <div className="col-span-1 w-full flex justify-end">
                          <Link 
                            href={`/admin/customers/${user.id}`}
-                           className="h-9 w-9 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center text-slate-600 hover:text-white hover:bg-brand transition-all shadow-lg"
+                           className="h-9 w-9 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center text-slate-600 hover:text-white hover:bg-brand transition-all shadow-lg active:scale-95"
                          >
                             <ChevronRight size={18} />
                          </Link>

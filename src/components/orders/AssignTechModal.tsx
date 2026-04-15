@@ -22,9 +22,10 @@ interface AssignTechModalProps {
   onClose: () => void;
   orderId: string;
   onAssigned?: () => void;
+  previousTechId?: string | null;
 }
 
-export const AssignTechModal = ({ isOpen, onClose, orderId, onAssigned }: AssignTechModalProps) => {
+export const AssignTechModal = ({ isOpen, onClose, orderId, onAssigned, previousTechId }: AssignTechModalProps) => {
   const { technicians, loading } = useTechnicians();
   const [searchQuery, setSearchQuery] = useState("");
   const [assigning, setAssigning] = useState<string | null>(null);
@@ -38,21 +39,31 @@ export const AssignTechModal = ({ isOpen, onClose, orderId, onAssigned }: Assign
   const handleAssign = async (tech: any) => {
     setAssigning(tech.id);
     try {
-      // 1. Update the Order Document
-      const orderRef = doc(db, "orders", orderId);
-      // We also check 'order' collection as part of our discovery logic
-      // But for update, we usually know the ID from the URL/State.
-      
-      await updateDoc(orderRef, {
-        assignedTechId: tech.id,
-        assignedTechName: tech.name,
-        assignedTechPhone: tech.phone,
-        status: "in-progress", 
-        updatedAt: serverTimestamp(),
-        assignedAt: serverTimestamp()
-      });
+      // 1. Revert Previous Technician Status (if applicable)
+      if (previousTechId && previousTechId !== tech.id) {
+        const prevTechRef = doc(db, "technicians", previousTechId);
+        await updateDoc(prevTechRef, {
+          status: "active",
+          updatedAt: serverTimestamp()
+        }).catch(e => console.error("Previous Tech Revert Error:", e));
+      }
 
-      // 2. Update Technician Availability
+      // 2. Update the Order Document
+      const orderRef = doc(db, "orders", orderId);
+      const collections = ["orders", "order"];
+      
+      for (const col of collections) {
+        await updateDoc(doc(db, col, orderId), {
+          assignedTechId: tech.id,
+          assignedTechName: tech.name,
+          assignedTechPhone: tech.phone,
+          status: "in-progress", 
+          updatedAt: serverTimestamp(),
+          assignedAt: serverTimestamp()
+        }).catch(() => {});
+      }
+
+      // 3. Update New Technician Availability
       const techRef = doc(db, "technicians", tech.id);
       await updateDoc(techRef, {
         status: "busy",

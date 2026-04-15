@@ -141,40 +141,55 @@ export default function CustomerDetailsPage() {
                       href={`/admin/orders/${order.id}`}
                       className="group block bg-card-bg border border-white/2 rounded-2xl p-4 hover:border-brand/30 transition-all hover:shadow-2xl"
                     >
-                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                          <div className="flex items-center gap-4">
-                             <div className="h-10 w-10 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center text-slate-500 group-hover:text-brand transition-colors">
-                                <ExternalLink size={20} />
-                             </div>
-                             <div>
-                                <h4 className="text-xs font-black text-white uppercase tracking-tight">
-                                   {order.service?.serviceType || "Unknown Service"} 
-                                   <span className="mx-2 text-slate-700">/</span>
-                                   <span className="text-slate-400">{order.service?.serviceSubType}</span>
-                                </h4>
-                                <p className="text-[9px] font-bold text-slate-700 uppercase mt-0.5">
-                                   ID Registry: {order.id.slice(0, 8)}...
-                                </p>
-                             </div>
-                          </div>
+                        <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-4">
+                           {/* Job Type & ID Row */}
+                           <div className="col-span-6 w-full flex items-center justify-between lg:justify-start gap-4">
+                              <div className="flex items-center gap-4 min-w-0">
+                                 <div className="h-10 w-10 shrink-0 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center text-slate-500 group-hover:text-brand transition-colors shadow-inner">
+                                    <ExternalLink size={20} />
+                                 </div>
+                                 <div className="min-w-0">
+                                    <h4 className="text-xs font-black text-white uppercase tracking-tight truncate">
+                                       {order.service?.serviceType || "Unknown Service"} 
+                                       <span className="mx-2 text-slate-700">/</span>
+                                       <span className="text-slate-400">{order.service?.serviceSubType}</span>
+                                    </h4>
+                                    <p className="text-[9px] font-bold text-slate-700 uppercase mt-0.5">
+                                       ID Registry: {order.id.slice(0, 8)}...
+                                    </p>
+                                 </div>
+                              </div>
 
-                          <div className="flex items-center gap-8">
-                             <div className="hidden md:block">
-                                <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest text-right">Job Date</p>
-                                <p className="text-[10px] font-bold text-white tabular-nums mt-0.5">
-                                   {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : "N/A"}
-                                </p>
-                             </div>
-                             <div className="w-24 flex justify-end">
-                                <Badge className={cn("px-3 py-1 rounded-full text-[8px] font-black uppercase border-none", getStatusStyles(order.status))}>
-                                   {order.status || "Pending"}
-                                </Badge>
-                             </div>
-                             <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center text-slate-700 group-hover:bg-brand group-hover:text-white transition-all">
-                                <ChevronRight size={16} />
-                             </div>
-                          </div>
-                       </div>
+                              {/* Mobile Job Date Badge */}
+                              <div className="lg:hidden flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/2 border border-white/5 text-slate-500">
+                                 <Calendar size={8} className="text-slate-800" />
+                                 <span className="text-[7px] font-black uppercase tabular-nums">
+                                    {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : "N/A"}
+                                 </span>
+                              </div>
+                           </div>
+
+                           {/* Desktop Job Date */}
+                           <div className="col-span-3 hidden lg:block">
+                              <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest text-right italic">Registry Log</p>
+                              <p className="text-[10px] font-bold text-white tabular-nums mt-0.5 text-right">
+                                 {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : "N/A"}
+                              </p>
+                           </div>
+
+                           {/* Status & Control Hub (Mobile Optimized) */}
+                           <div className="col-span-3 w-full flex items-center justify-between lg:justify-end gap-6 pt-3 lg:pt-0 border-t border-white/5 lg:border-none mt-1 lg:mt-0">
+                              <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest">Job Pulse</div>
+                              <div className="flex items-center gap-4">
+                                 <Badge className={cn("px-3 py-1 rounded-full text-[8px] font-black uppercase border-none", getStatusStyles(order.status))}>
+                                    {order.status || "Pending"}
+                                 </Badge>
+                                 <div className="h-8 w-8 rounded-xl bg-white/5 flex items-center justify-center text-slate-700 group-hover:bg-brand group-hover:text-white transition-all shadow-inner">
+                                    <ChevronRight size={16} />
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
                     </Link>
                   </motion.div>
                ))

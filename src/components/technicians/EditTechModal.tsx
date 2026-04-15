@@ -3,7 +3,7 @@
 import React from "react";
 import { 
   X, 
-  UserPlus, 
+  Edit3, 
   Mail, 
   Phone, 
   User, 
@@ -11,15 +11,17 @@ import {
   ArrowRight,
   ShieldCheck,
   MapPin,
-  Hash
+  Hash,
+  Save
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAddTechnician } from "@/hooks/useAddTechnician";
+import { useEditTechnician } from "@/hooks/useEditTechnician";
 import { cn } from "@/lib/utils";
 
-interface AddTechModalProps {
+interface EditTechModalProps {
   isOpen: boolean;
   onClose: () => void;
+  technician: any;
 }
 
 interface InputFieldProps {
@@ -29,10 +31,9 @@ interface InputFieldProps {
   value: string;
   onChange: (value: string) => void;
   type?: string;
-  className?: string;
 }
 
-export const AddTechModal = ({ isOpen, onClose }: AddTechModalProps) => {
+export const EditTechModal = ({ isOpen, onClose, technician }: EditTechModalProps) => {
   const {
     formData,
     setFormData,
@@ -40,14 +41,16 @@ export const AddTechModal = ({ isOpen, onClose }: AddTechModalProps) => {
     setCurrentSkill,
     addSkill,
     removeSkill,
-    registerTech,
+    updateTech,
     loading
-  } = useAddTechnician(onClose);
+  } = useEditTechnician(technician, onClose);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    registerTech();
+    updateTech();
   };
+
+  if (!technician) return null;
 
   return (
     <AnimatePresence>
@@ -70,12 +73,12 @@ export const AddTechModal = ({ isOpen, onClose }: AddTechModalProps) => {
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
-                   <div className="h-9 w-9 rounded-xl bg-white/3 border border-white/5 flex items-center justify-center text-brand shadow-inner">
-                      <UserPlus size={18} />
+                   <div className="h-9 w-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 shadow-inner">
+                      <Edit3 size={18} />
                    </div>
                    <div>
-                      <h3 className="text-xs font-black text-white uppercase tracking-widest leading-none italic">Add Specialist</h3>
-                      <p className="text-[8px] text-slate-600 font-bold uppercase tracking-widest mt-1.5 leading-none">Fleet Registry</p>
+                      <h3 className="text-xs font-black text-white uppercase tracking-widest leading-none italic">Modify Specialist</h3>
+                      <p className="text-[8px] text-slate-600 font-bold uppercase tracking-widest mt-1.5 leading-none">Registry Update Protocol</p>
                    </div>
                 </div>
                 <button 
@@ -164,8 +167,8 @@ export const AddTechModal = ({ isOpen, onClose }: AddTechModalProps) => {
                         <div className="h-3.5 w-3.5 border-2 border-slate-400 border-t-slate-950 animate-spin rounded-full" />
                      ) : (
                         <>
-                          Onboard Specialist
-                          <ArrowRight size={14} />
+                          Commit Changes
+                          <Save size={14} />
                         </>
                      )}
                    </button>
@@ -175,7 +178,7 @@ export const AddTechModal = ({ isOpen, onClose }: AddTechModalProps) => {
 
             <div className="p-3 bg-white/2 border-t border-white/5 flex items-center justify-center gap-2">
                <ShieldCheck size={12} className="text-slate-700" />
-               <span className="text-[7px] font-black text-slate-700 uppercase tracking-widest">Digital Auth Verified</span>
+               <span className="text-[7px] font-black text-slate-700 uppercase tracking-widest">Digital Auth Sync Active</span>
             </div>
           </motion.div>
         </div>
