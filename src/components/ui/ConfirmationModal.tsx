@@ -58,7 +58,7 @@ export const ConfirmationModal = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]"
+            className="fixed inset-0 bg-slate-950/90 backdrop-blur-md"
           />
 
           <motion.div

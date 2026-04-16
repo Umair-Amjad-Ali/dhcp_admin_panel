@@ -1,6 +1,4 @@
 "use client";
-
-import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useCustomerDetails } from "@/hooks/useCustomerDetails";
 import { 
@@ -16,8 +14,9 @@ import {
   ExternalLink,
   UserCheck
 } from "lucide-react";
+import { MissionMetric } from "@/components/common/MissionMetric";
+import { MissionBadge } from "@/components/common/MissionBadge";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -87,31 +86,29 @@ export default function CustomerDetailsPage() {
            </div>
 
            <div className="pt-8 relative z-10">
-              <Badge className="bg-emerald-500/10 text-emerald-500 border-none px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest">
-                 Live Cloud Profile
-              </Badge>
+              <MissionBadge status="active" className="px-4 py-1.5" />
            </div>
         </Card>
 
         {/* Stats Grid */}
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-           <MetricBox 
+           <MissionMetric 
             label="Total Volume" 
             value={customer.totalOrders || 0} 
-            icon={<ShoppingBag size={24}/>} 
-            color="text-brand" 
+            icon={<ShoppingBag />} 
+            color="blue" 
            />
-           <MetricBox 
+           <MissionMetric 
             label="Success Jobs" 
             value={customer.completedOrders || 0} 
-            icon={<CheckCircle2 size={24}/>} 
-            color="text-emerald-500" 
+            icon={<CheckCircle2 />} 
+            color="emerald" 
            />
-           <MetricBox 
+           <MissionMetric 
             label="Cancelled Logs" 
             value={customer.cancelledOrders || 0} 
-            icon={<XCircle size={24}/>} 
-            color="text-rose-500" 
+            icon={<XCircle />} 
+            color="red" 
            />
         </div>
       </div>
@@ -181,9 +178,7 @@ export default function CustomerDetailsPage() {
                            <div className="col-span-3 w-full flex items-center justify-between lg:justify-end gap-6 pt-3 lg:pt-0 border-t border-white/5 lg:border-none mt-1 lg:mt-0">
                               <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest">Job Pulse</div>
                               <div className="flex items-center gap-4">
-                                 <Badge className={cn("px-3 py-1 rounded-full text-[8px] font-black uppercase border-none", getStatusStyles(order.status))}>
-                                    {order.status || "Pending"}
-                                 </Badge>
+                                 <MissionBadge status={order.status || "pending"} className="px-3" />
                                  <div className="h-8 w-8 rounded-xl bg-white/5 flex items-center justify-center text-slate-700 group-hover:bg-brand group-hover:text-white transition-all shadow-inner">
                                     <ChevronRight size={16} />
                                  </div>
@@ -227,27 +222,4 @@ function CustomerDetailsShimmer() {
        </div>
     </div>
   );
-}
-
-function MetricBox({ label, value, icon, color }: any) {
-  return (
-    <Card className="p-6 bg-card-bg border-white/3 rounded-[2rem] flex flex-col items-center justify-center text-center group hover:border-brand/20 transition-all">
-       <div className={cn("mb-4 p-4 rounded-2xl bg-white/2 group-hover:scale-110 transition-transform shadow-inner", color)}>
-          {icon}
-       </div>
-       <h3 className="text-2xl font-black text-white tabular-nums tracking-tighter">{value}</h3>
-       <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] mt-2 italic">{label}</p>
-    </Card>
-  );
-}
-
-function getStatusStyles(status: string) {
-  const s = status?.toLowerCase();
-  switch (s) {
-    case 'completed': return 'bg-emerald-500/10 text-emerald-500';
-    case 'cancelled': return 'bg-rose-500/10 text-rose-500';
-    case 'in-progress': return 'bg-blue-500/10 text-blue-500';
-    case 'pending': return 'bg-amber-500/10 text-amber-500';
-    default: return 'bg-slate-500/10 text-slate-500';
-  }
 }

@@ -1,18 +1,14 @@
 "use client";
 
-import React from "react";
 import { 
-  MapPin, 
   Clock, 
   Wrench,
   Calendar,
   ChevronRight,
-  User
 } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+import { MissionBadge } from "@/components/common/MissionBadge";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 interface CardViewProps {
   orders: any[];
@@ -23,7 +19,7 @@ export const CardView = ({ orders }: CardViewProps) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {orders.map((order, idx) => (
+      {orders.map((order: any, idx: number) => (
         <motion.div
           key={order.id}
           initial={{ opacity: 0, y: 10 }}
@@ -46,9 +42,7 @@ export const CardView = ({ orders }: CardViewProps) => {
                           <p className="text-[8px] text-slate-600 font-bold uppercase tracking-widest leading-none mt-1">{order.location?.city || order.city}</p>
                        </div>
                     </div>
-                    <Badge className={cn("px-1.5 py-0 rounded-md text-[7px] font-black uppercase border-none", getStatusStyles(order.status))}>
-                      {order.status}
-                    </Badge>
+                    <MissionBadge status={order.status} />
                  </div>
 
                  <div className="space-y-2 mb-4">
@@ -86,13 +80,3 @@ export const CardView = ({ orders }: CardViewProps) => {
     </div>
   );
 };
-
-function getStatusStyles(status: string) {
-  const s = status?.toLowerCase();
-  switch (s) {
-    case 'pending': return 'bg-amber-500/10 text-amber-500';
-    case 'in-progress': return 'bg-blue-500/10 text-blue-500';
-    case 'completed': return 'bg-emerald-500/10 text-emerald-500';
-    default: return 'bg-red-500/10 text-red-500';
-  }
-}

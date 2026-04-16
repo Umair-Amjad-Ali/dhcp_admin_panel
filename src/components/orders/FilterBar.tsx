@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Search, Filter, RotateCcw } from "lucide-react";
 import { useAdminStore } from "@/store/useAdminStore";
 

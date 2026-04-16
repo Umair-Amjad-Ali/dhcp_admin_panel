@@ -14,13 +14,15 @@ import {
   Calendar,
   Layers
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { MissionMetric } from "@/components/common/MissionMetric";
+import { MissionBadge } from "@/components/common/MissionBadge";
+import { RegistryLayout } from "@/components/common/RegistryLayout";
 import Link from "next/link";
 
 export default function CustomersPage() {
-  const { customers, loading, hasMore, loadMore, loadingMore } = useCustomers();
   const [searchQuery, setSearchQuery] = useState("");
+  const { customers, loading, hasMore, loadMore, loadingMore } = useCustomers(searchQuery);
 
   const filteredCustomers = customers.filter(user => 
     user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -29,36 +31,17 @@ export default function CustomersPage() {
   );
 
   return (
-    <div className="space-y-6 pb-20">
-      {/* Header Intelligence */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-black text-white tracking-tighter uppercase italic">
-            Customer Registry <span className="text-brand">.</span>
-          </h2>
-          <div className="flex items-center gap-2">
-            <span className="h-1 w-1 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)] animate-pulse" />
-            <p className="text-slate-700 text-[8px] font-black uppercase tracking-[0.2em]">
-              {customers.length} Profiles Cached {hasMore && " • More in Cloud"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Modern Filter */}
-      <div className="relative group">
-        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-700 group-focus-within:text-brand transition-colors">
-          <Search size={16} />
-        </div>
-        <input 
-          type="text" 
-          placeholder="Lookup by customer name, email or mobile serial..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-card-bg border border-white/3 rounded-2xl pl-12 pr-6 py-4 text-[10px] font-bold text-white placeholder:text-slate-800 focus:outline-none focus:border-brand/40 shadow-2xl transition-all"
-        />
-      </div>
-
+    <RegistryLayout
+      title="Customer Registry"
+      metricText={`${customers.length} Profiles Cached ${hasMore ? " • More in Cloud" : ""}`}
+      pulseColor="blue"
+      searchPlaceholder="Lookup by customer name, email or mobile serial..."
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      loading={loading}
+      isEmpty={filteredCustomers.length === 0}
+      emptyMessage="User registry search returned no matches"
+    >
       <div className="space-y-2">
         {/* Registry Table Header */}
         <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 text-[8px] font-black text-slate-700 uppercase tracking-[0.3em]">
@@ -118,9 +101,9 @@ export default function CustomersPage() {
                       <div className="col-span-3 w-full flex items-center justify-between lg:justify-start lg:gap-6 py-3 lg:py-0 border-y border-white/5 lg:border-none my-1 lg:my-0">
                          <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest">Order Pulse</div>
                          <div className="flex items-center gap-6">
-                            <Metric icon={<ShoppingBag size={10} className="text-brand"/>} value={user.totalOrders || 0} label="Total" />
-                            <Metric icon={<CheckCircle2 size={10} className="text-emerald-500"/>} value={user.completedOrders || 0} label="Done" />
-                            <Metric icon={<XCircle size={10} className="text-rose-500"/>} value={user.cancelledOrders || 0} label="Lost" />
+                            <MissionMetric variant="minimal" icon={<ShoppingBag size={10} />} value={user.totalOrders || 0} label="Total" color="blue" />
+                            <MissionMetric variant="minimal" icon={<CheckCircle2 size={10} />} value={user.completedOrders || 0} label="Done" color="emerald" />
+                            <MissionMetric variant="minimal" icon={<XCircle size={10} />} value={user.cancelledOrders || 0} label="Lost" color="red" />
                          </div>
                       </div>
 
@@ -167,27 +150,8 @@ export default function CustomersPage() {
             )}
           </div>
         )}
-
-        {!loading && filteredCustomers.length === 0 && (
-          <div className="py-20 flex flex-col items-center gap-4 opacity-50 text-slate-800">
-            <Database size={40} />
-            <p className="text-[10px] font-black uppercase tracking-widest italic">User registry search returned no matches</p>
-          </div>
-        )}
       </div>
-    </div>
-  );
-}
-
-function Metric({ icon, value, label }: any) {
-  return (
-    <div className="flex flex-col items-center gap-1">
-       <div className="flex items-center gap-1.5">
-          {icon}
-          <span className="text-xs font-black text-white tabular-nums">{value}</span>
-       </div>
-       <span className="text-[7px] font-black text-slate-700 uppercase tracking-widest">{label}</span>
-    </div>
+    </RegistryLayout>
   );
 }
 

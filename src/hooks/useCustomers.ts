@@ -15,19 +15,30 @@ import { db } from "@/lib/firebase";
 
 const CHUNK_SIZE = 25;
 
-export function useCustomers() {
+export function useCustomers(searchQuery?: string) {
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery || "");
+  
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery || "");
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const activeLimit = debouncedSearch ? 150 : CHUNK_SIZE;
+    
     // Initial load
     const q = query(
       collection(db, "users"), 
       orderBy("createdAt", "desc"),
-      limit(CHUNK_SIZE)
+      limit(activeLimit)
     );
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -37,7 +48,7 @@ export function useCustomers() {
       }));
       setCustomers(data);
       setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
-      setHasMore(snapshot.docs.length === CHUNK_SIZE);
+      setHasMore(!debouncedSearch && snapshot.docs.length === CHUNK_SIZE);
       setLoading(false);
     }, (err) => {
       console.error("Customers initial load error:", err);
@@ -45,7 +56,7 @@ export function useCustomers() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [debouncedSearch]);
 
   const loadMore = () => {
     if (!lastDoc || loadingMore || !hasMore) return;
@@ -58,8 +69,6 @@ export function useCustomers() {
       limit(CHUNK_SIZE)
     );
 
-    // For "Load More", we use a one-time get normally, but to keep it simple and reactive 
-    // we just use a snapshot for the additional chunk as well.
     const unsubscribe = onSnapshot(nextQ, (snapshot) => {
       if (!snapshot.empty) {
         const newData = snapshot.docs.map(doc => ({
@@ -73,7 +82,7 @@ export function useCustomers() {
         setHasMore(false);
       }
       setLoadingMore(false);
-      unsubscribe(); // One-time fetch for subsequent batches to prevent listener explosion
+      unsubscribe(); 
     }, (err) => {
       console.error("Load more customers error:", err);
       setLoadingMore(false);

@@ -1,18 +1,15 @@
 "use client";
 
-import React from "react";
 import { 
   ChevronRight, 
   MapPin, 
   Clock, 
   Wrench,
-  User,
   Calendar
 } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+import { MissionBadge } from "@/components/common/MissionBadge";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 interface DataTableProps {
   orders: any[];
@@ -45,7 +42,7 @@ export const DataTable = ({ orders }: DataTableProps) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-border-subtle">
-            {orders.map((order, idx) => (
+            {orders.map((order: any, idx: number) => (
               <motion.tr 
                 key={order.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -108,12 +105,7 @@ export const DataTable = ({ orders }: DataTableProps) => {
 
                 {/* Status Column */}
                 <td className="px-6 py-5">
-                  <Badge className={cn(
-                    "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border-none shadow-sm",
-                    getStatusStyles(order.status)
-                  )}>
-                    {order.status || "Pending"}
-                  </Badge>
+                  <MissionBadge status={order.status || "pending"} />
                 </td>
 
                 {/* Actions Column */}
@@ -133,15 +125,3 @@ export const DataTable = ({ orders }: DataTableProps) => {
     </div>
   );
 };
-
-function getStatusStyles(status: string) {
-  const s = status?.toLowerCase();
-  switch (s) {
-    case 'pending': return 'bg-amber-500/10 text-amber-500 shadow-amber-500/5';
-    case 'in-progress': return 'bg-blue-500/10 text-blue-500 shadow-blue-500/5';
-    case 'completed': return 'bg-emerald-500/10 text-emerald-500 shadow-emerald-500/5';
-    case 'cancelled':
-    case 'rejected': return 'bg-red-500/10 text-red-400 shadow-red-500/5';
-    default: return 'bg-slate-500/10 text-slate-400';
-  }
-}

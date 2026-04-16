@@ -10,7 +10,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { loading, isAdmin } = useAdminAuth();
   const isLoginPage = pathname === "/admin/login";
 
-  // Case 1: Full-Screen Loading Overlay
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-page-bg z-100">
@@ -19,7 +18,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Case 2: Login Page Experience (Minimal Shell)
   if (isLoginPage) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center relative overflow-hidden">
@@ -29,12 +27,9 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Case 3: Unauthorized Access (Prevent rendering shell if not admin)
   if (!isAdmin) {
     return null; 
   }
-
-  // Case 4: Authenticated Admin Shell (Stable Structure)
   return (
     <div className="flex h-screen bg-page-bg overflow-hidden">
       <AdminSidebar />

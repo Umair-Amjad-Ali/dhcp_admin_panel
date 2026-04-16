@@ -72,13 +72,11 @@ export function useEditTechnician(technician: any, onSuccess: () => void) {
         toast.info("Synchronizing data across active orders...");
         
         // Find orders where this technician is assigned
-        // We sync only 'pending' and 'in-progress' orders to preserve historical data on completed ones
-        const ordersRef = collection(db, "order"); // The user mentioned 'order' or 'orders' collection
+        const ordersRef = collection(db, "orders");
         const ordersQuery = query(
           ordersRef, 
           where("assignedTechId", "==", technician.id)
         );
-        
         const snapshot = await getDocs(ordersQuery);
         const batch = writeBatch(db);
         
@@ -117,7 +115,6 @@ export function useEditTechnician(technician: any, onSuccess: () => void) {
       toast.success("Specialist Profile Updated & Synchronized");
       onSuccess();
     } catch (err) {
-      console.error("Update Error:", err);
       toast.error("Process Failed: Registry Update Interrupted");
     } finally {
       setLoading(false);

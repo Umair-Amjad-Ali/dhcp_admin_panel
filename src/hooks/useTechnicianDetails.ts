@@ -78,7 +78,7 @@ export function useTechnicianDetails(technicianId: string) {
         setLoading(false);
       }
     }, (err) => {
-       console.error("Technician Sync Error:", err);
+      //  console.error("Technician Sync Error:", err);
        setLoading(false);
     });
 

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dammam Home Care pro",
+  title: "Dammam Home Care pro Admin",
   description: "Dammam Home Care pro Admin panel",
 };
 

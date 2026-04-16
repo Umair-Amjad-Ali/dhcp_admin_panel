@@ -7,7 +7,6 @@ export const AdminTopbar = () => {
   const { toggleSidebar } = useUIStore();
   const pathname = usePathname();
 
-  // Extract page title from pathname
   const pageTitle = pathname.split("/").pop()?.replace(/-/g, " ") || "Dashboard";
 
   return (
@@ -30,12 +29,12 @@ export const AdminTopbar = () => {
       
       <div className="flex items-center gap-6">
         {/* Minimal Actions */}
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <button className="p-2 text-slate-400 hover:text-brand transition-all relative">
             <Bell size={18} />
             <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-brand rounded-full border border-card-bg" />
           </button>
-        </div>
+        </div> */}
       </div>
     </header>
   );

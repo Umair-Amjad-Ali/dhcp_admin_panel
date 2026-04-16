@@ -1,114 +1,141 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { 
-  collection, 
-  getDocs, 
-  orderBy, 
-  limit,
-  query
-} from "firebase/firestore";
+import { useState, useEffect, useMemo } from "react";
+import { collection, getDocs, orderBy, limit, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+
+export type Timeframe = "7d" | "30d" | "all";
 
 export function useDashboardData() {
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    total: 0,
-    pending: 0,
-    completed: 0,
-    cancelled: 0,
-    today: 0,
-    activeTechs: 0
-  });
-  const [recentOrders, setRecentOrders] = useState<any[]>([]);
-  const [chartData, setChartData] = useState<any[]>([]);
+  const [timeframe, setTimeframe] = useState<Timeframe>("7d");
+  
+  // Store raw data so we don't re-fetch from Firebase when changing dates
+  const [rawOrders, setRawOrders] = useState<any[]>([]);
+  const [activeTechCount, setActiveTechCount] = useState(0);
 
+  // 1. Fetch raw data ONCE on mount
   useEffect(() => {
-    async function fetchData() {
+    async function fetchRawData() {
       try {
         setLoading(true);
-        console.log("Starting Dashboard Data Fetch...");
-
-        // Try 'order' collection first, fallback to 'orders' if zero
         let ordersRef = collection(db, "order");
         let ordersSnap = await getDocs(ordersRef);
         
         if (ordersSnap.empty) {
-          console.log("'order' collection empty, trying 'orders'...");
           ordersRef = collection(db, "orders");
           ordersSnap = await getDocs(ordersRef);
         }
 
-        console.log(`Found ${ordersSnap.size} orders total.`);
+        const orders = ordersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setRawOrders(orders);
 
-        let pending = 0;
-        let completed = 0;
-        let cancelled = 0;
-        let todayCount = 0;
-        
-        const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-
-        const dayCounts: { [key: string]: number } = {};
-        for (let i = 6; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          const label = d.toLocaleDateString('en-US', { weekday: 'short' });
-          dayCounts[label] = 0;
-        }
-
-        ordersSnap.docs.forEach(doc => {
-          const data = doc.data();
-          const createdAt = data.createdAt?.toDate();
-          const status = data.status?.toLowerCase();
-          
-          // Count statuses accurately
-          if (status === "pending") pending++;
-          else if (status === "completed") completed++;
-          else if (status === "cancelled" || status === "rejected") cancelled++;
-          
-          if (createdAt) {
-            const time = createdAt.getTime();
-            if (time >= startOfToday) todayCount++;
-
-            const label = createdAt.toLocaleDateString('en-US', { weekday: 'short' });
-            if (dayCounts.hasOwnProperty(label)) {
-              dayCounts[label]++;
-            }
-          }
-        });
-
-        // 2. Fetch Techs
         const techsSnap = await getDocs(collection(db, "technicians"));
-
-        setStats({
-          total: ordersSnap.size,
-          pending: pending,
-          completed: completed,
-          cancelled: cancelled,
-          today: todayCount,
-          activeTechs: techsSnap.docs.filter(d => d.data().status === "active").length
-        });
-
-        setChartData(Object.keys(dayCounts).map(key => ({
-          name: key,
-          orders: dayCounts[key]
-        })));
-
-        // 3. Recent 5
-        const recentQuery = query(ordersRef, orderBy("createdAt", "desc"), limit(5));
-        const recentSnap = await getDocs(recentQuery);
-        setRecentOrders(recentSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-
+        setActiveTechCount(techsSnap.docs.filter(d => d.data().status === "active").length);
       } catch (error) {
         console.error("Dashboard Hook Error:", error);
       } finally {
         setLoading(false);
       }
     }
-
-    fetchData();
+    fetchRawData();
   }, []);
 
-  return { loading, stats, recentOrders, chartData };
+  // 2. Process data whenever rawOrders or timeframe changes
+  const processedData = useMemo(() => {
+    const now = new Date();
+    const cutoffDate = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    let daysToTrack = 7;
+    if (timeframe === "7d") { cutoffDate.setDate(now.getDate() - 7); daysToTrack = 7; }
+    else if (timeframe === "30d") { cutoffDate.setDate(now.getDate() - 30); daysToTrack = 30; }
+    else { cutoffDate.setFullYear(2000); daysToTrack = 0; } // All time
+
+    // Filter ALL orders by timeframe strictly
+    const validOrders = timeframe === "all" 
+      ? rawOrders 
+      : rawOrders.filter(order => {
+          const createdAt = order.createdAt?.toDate();
+          return createdAt ? createdAt >= cutoffDate : false;
+        });
+
+    let pending = 0;
+    let completed = 0;
+    let cancelled = 0;
+    let todayCount = 0;
+    
+    // Setup chart data structures
+    const dayCounts: { [key: string]: number } = {};
+    if (timeframe !== "all") {
+      for (let i = daysToTrack - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const label = timeframe === "30d" 
+          ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          : d.toLocaleDateString('en-US', { weekday: 'short' });
+        dayCounts[label] = 0;
+      }
+    }
+
+    const serviceCounts: { [key: string]: number } = {};
+
+    validOrders.forEach(order => {
+      const createdAt = order.createdAt?.toDate();
+      const status = order.status?.toLowerCase();
+      const serviceName = order.service?.serviceType || "General";
+      
+      // Stats
+      if (status === "pending" || status === "in-progress") pending++;
+      else if (status === "completed") completed++;
+      else if (status === "cancelled" || status === "rejected") cancelled++;
+      
+      // Today count
+      if (createdAt && createdAt.getTime() >= startOfToday) todayCount++;
+
+      // Area Chart (Trend)
+      if (createdAt && timeframe !== "all") {
+        const label = timeframe === "30d" 
+          ? createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          : createdAt.toLocaleDateString('en-US', { weekday: 'short' });
+        if (dayCounts.hasOwnProperty(label)) dayCounts[label]++;
+      }
+
+      // Bar Chart (Services)
+      serviceCounts[serviceName] = (serviceCounts[serviceName] || 0) + 1;
+    });
+
+    // Format final chart arrays
+    const chartData = timeframe === "all" ? [] : Object.keys(dayCounts).map(key => ({
+      name: key,
+      orders: dayCounts[key]
+    }));
+
+    const topServices = Object.keys(serviceCounts)
+      .map(k => ({ name: k, value: serviceCounts[k] }))
+      .sort((a,b) => b.value - a.value)
+      .slice(0, 5);
+
+    const statusChartData = [
+      { name: 'Completed', value: completed, color: '#10b981' },
+      { name: 'Pending', value: pending, color: '#f59e0b' },
+      { name: 'Cancelled', value: cancelled, color: '#ef4444' },
+    ].filter(s => s.value > 0);
+
+    return {
+      stats: { total: validOrders.length, pending, completed, cancelled, today: todayCount, activeTechs: activeTechCount },
+      chartData,
+      topServices,
+      statusChartData,
+      // Recent orders now STRICTLY respects the timeframe validOrders
+      recentOrders: validOrders.sort((a,b) => (b.createdAt?.toDate()?.getTime() || 0) - (a.createdAt?.toDate()?.getTime() || 0)).slice(0, 5)
+    };
+  }, [rawOrders, timeframe, activeTechCount]);
+
+  return { 
+    loading, 
+    ...processedData,
+    timeframe,
+    setTimeframe 
+  };
 }

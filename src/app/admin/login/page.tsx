@@ -24,7 +24,6 @@ function LoginPageContent() {
   
   const { isAdmin, loading: authLoading } = useAdminAuth();
 
-  // If already logged in as admin, redirect out of login page immediately
   useEffect(() => {
     if (!authLoading && isAdmin) {
       router.replace("/admin/dashboard");
@@ -38,11 +37,9 @@ function LoginPageContent() {
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
       toast.success("Identity Verified");
-      // The AdminAuthContext will detect the change and useEffect above will redirect.
-      // But we can also push here for faster UX.
-      router.push("/admin/dashboard");
+      // router.push("/admin/dashboard");
     } catch (error: any) {
-      console.error("Login error:", error);
+      // console.error("Login error:", error);
       toast.error("Invalid credentials.");
       setLoading(false);
     }
@@ -74,7 +71,7 @@ function LoginPageContent() {
                   animate={{ opacity: 1, y: 0 }}
                   className="text-3xl font-black text-white leading-tight tracking-tight mb-4"
                 >
-                  Fixora Admin <br />
+                  DHCP Admin <br />
                   <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-blue-600">
                     Control Center.
                   </span>
