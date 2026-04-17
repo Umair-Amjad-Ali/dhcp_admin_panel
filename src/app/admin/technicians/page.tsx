@@ -70,14 +70,14 @@ export default function TechniciansPage() {
       emptyMessage="Inventory search resolved zero results"
     >
       <div className="space-y-2">
-        <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 text-[8px] font-black text-slate-700 uppercase tracking-[0.3em]">
-           <div className="col-span-3">Pros Identity</div>
+        <div className="hidden lg:grid grid-cols-12 gap-4 px-8 py-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] bg-card-bg/50 border border-white/5 rounded-2xl mb-2">
+           <div className="col-span-2">Pros Identity</div>
            <div className="col-span-2">Contact Signal</div>
            <div className="col-span-2">Base Location</div>
            <div className="col-span-2">Core Expertise</div>
            <div className="col-span-1 text-center">Jobs</div>
            <div className="col-span-1 text-center">Status</div>
-           <div className="col-span-1 text-right">Actions</div>
+           <div className="col-span-2 text-right">Actions</div>
         </div>
 
         {loading ? (

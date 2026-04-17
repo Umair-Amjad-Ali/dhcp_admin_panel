@@ -44,7 +44,7 @@ export default function CustomersPage() {
     >
       <div className="space-y-2">
         {/* Registry Table Header */}
-        <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 text-[8px] font-black text-slate-700 uppercase tracking-[0.3em]">
+        <div className="hidden lg:grid grid-cols-12 gap-4 px-8 py-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] bg-card-bg/50 border border-white/5 rounded-2xl mb-2">
            <div className="col-span-4">Profile Identity</div>
            <div className="col-span-2">Contact Link</div>
            <div className="col-span-3">Order Statistics (T/C/X)</div>
@@ -116,12 +116,13 @@ export default function CustomersPage() {
                       </div>
 
                       {/* Action Hub */}
-                      <div className="col-span-1 w-full flex justify-end">
+                      <div className="col-span-1 w-full lg:w-auto flex items-center justify-end pt-3 lg:pt-0 border-t border-white/5 lg:border-none">
                          <Link 
                            href={`/admin/customers/${user.id}`}
-                           className="h-9 w-9 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center text-slate-600 hover:text-white hover:bg-brand transition-all shadow-lg active:scale-95"
+                           className="w-full lg:h-9 lg:w-9 h-11 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center gap-3 text-slate-600 hover:text-white hover:bg-brand transition-all shadow-lg active:scale-95 group/btn px-4 lg:px-0"
                          >
-                            <ChevronRight size={18} />
+                            <span className="lg:hidden text-[9px] font-black uppercase tracking-widest">View Profile Dossier</span>
+                            <ChevronRight size={18} className="group-hover/btn:translate-x-0.5 transition-transform" />
                          </Link>
                       </div>
                    </div>
@@ -159,13 +160,23 @@ function CustomerShimmer() {
   return (
     <div className="bg-card-bg border border-white/2 rounded-2xl p-4 relative overflow-hidden">
        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/1 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
-       <div className="flex items-center gap-6">
-          <div className="h-10 w-10 rounded-xl bg-white/2 shrink-0" />
-          <div className="grid grid-cols-4 gap-12 flex-1">
-             <div className="h-3 bg-white/2 rounded w-3/4" />
-             <div className="h-3 bg-white/2 rounded w-full" />
-             <div className="h-3 bg-white/2 rounded w-1/2" />
-             <div className="h-3 bg-white/2 rounded w-1/4" />
+       <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-4">
+          <div className="col-span-4 flex items-center gap-4">
+             <div className="h-10 w-10 rounded-xl bg-white/2 shrink-0" />
+             <div className="flex-1 space-y-2">
+                <div className="h-3 bg-white/2 rounded w-2/3" />
+                <div className="h-2 bg-white/2 rounded w-1/2" />
+             </div>
+          </div>
+          <div className="col-span-2 hidden lg:block h-3 bg-white/2 rounded w-3/4" />
+          <div className="col-span-3 hidden lg:flex items-center gap-6">
+             <div className="h-4 w-12 bg-white/2 rounded-lg" />
+             <div className="h-4 w-12 bg-white/2 rounded-lg" />
+             <div className="h-4 w-12 bg-white/2 rounded-lg" />
+          </div>
+          <div className="col-span-2 hidden lg:block h-3 bg-white/2 rounded w-1/2" />
+          <div className="col-span-1 hidden lg:flex justify-end">
+             <div className="h-9 w-9 bg-white/2 rounded-xl" />
           </div>
        </div>
     </div>

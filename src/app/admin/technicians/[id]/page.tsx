@@ -30,6 +30,31 @@ export default function TechnicianDetailsPage() {
   const router = useRouter();
   const { technician, orders, loading } = useTechnicianDetails(id as string);
 
+  // Real-time calculation of technician performance metrics
+  // FIXED: Moved before early returns to satisfy Rules of Hooks
+  const performanceStats = React.useMemo(() => {
+    const total = orders.length;
+    const completed = orders.filter(o => o.status?.toLowerCase() === "completed").length;
+    const cancelled = orders.filter(o => o.status?.toLowerCase() === "cancelled" || o.status?.toLowerCase() === "rejected").length;
+    
+    // Efficiency: Ratio of completed to closed (completed + cancelled)
+    const efficiency = (completed + cancelled) > 0 
+      ? Math.round((completed / (completed + cancelled)) * 100) 
+      : 0;
+
+    // Growth/Performance: % of total assigned orders that are completed
+    const performance = total > 0 
+      ? Math.round((completed / total) * 100) 
+      : 0;
+
+    return { 
+      completed, 
+      efficiency: `${efficiency}%`, 
+      performance: `${performance}%`,
+      total 
+    };
+  }, [orders]);
+
   if (loading) {
     return <TechnicianShimmer />;
   }
@@ -120,19 +145,19 @@ export default function TechnicianDetailsPage() {
            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <MetricBox 
                 label="Mission Volume" 
-                value={technician.completedJobs || 0} 
+                value={performanceStats.completed} 
                 icon={<Briefcase size={24}/>} 
                 color="text-brand" 
               />
               <MetricBox 
-                label="Success Rate" 
-                value="98%" 
+                label="Efficiency Score" 
+                value={performanceStats.efficiency} 
                 icon={<CheckCircle2 size={24}/>} 
                 color="text-emerald-500" 
               />
               <MetricBox 
-                label="System Health" 
-                value="A+" 
+                label="Growth Performance" 
+                value={performanceStats.performance} 
                 icon={<Zap size={24}/>} 
                 color="text-amber-500" 
               />

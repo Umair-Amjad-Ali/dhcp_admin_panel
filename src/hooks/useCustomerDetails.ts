@@ -22,17 +22,9 @@ export function useCustomerDetails(customerId: string) {
         setCustomer(userData);
         
         // 2. Discover and Sync Orders using userId (Perfect Matching)
-        const collectionNames = ["orders", "order"];
+        const ordersRef = collection(db, "orders");
         
-        const attachOrderListener = (index: number) => {
-          if (index >= collectionNames.length) {
-            setLoading(false);
-            return;
-          }
-
-          const colName = collectionNames[index];
-          const ordersRef = collection(db, colName);
-          
+        const setupOrderListener = () => {
           try {
             // We use customerId directly as it represents the userId in orders
             const q = query(
@@ -43,19 +35,14 @@ export function useCustomerDetails(customerId: string) {
             );
 
             unsubOrders = onSnapshot(q, (orderSnap) => {
-              if (orderSnap.empty && index < collectionNames.length - 1) {
-                unsubOrders?.();
-                attachOrderListener(index + 1);
-              } else {
-                const orderList = orderSnap.docs.map(doc => ({
-                  id: doc.id,
-                  ...doc.data()
-                }));
-                setOrders(orderList);
-                setLoading(false);
-              }
+              const orderList = orderSnap.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+              }));
+              setOrders(orderList);
+              setLoading(false);
             }, (err) => {
-              console.warn(`Complex query failed for ${colName}, falling back to simple match.`, err);
+              console.warn("Complex query failed for orders, falling back to simple match.", err);
               // Clean up previous listener before starting fallback
               unsubOrders?.();
               
@@ -65,18 +52,22 @@ export function useCustomerDetails(customerId: string) {
                 limit(50)
               );
               
-              // Correctly track the fallback listener
+              // Correctly track the fallback listener with error handling
               unsubOrders = onSnapshot(simpleQ, (s) => {
                  setOrders(s.docs.map(d => ({id: d.id, ...d.data()})));
+                 setLoading(false);
+              }, (fallbackErr) => {
+                 console.error("Critical: Orders sync failed:", fallbackErr);
                  setLoading(false);
               });
             });
           } catch (e) {
+            console.error("Orders sync listener setup error:", e);
             setLoading(false);
           }
         };
 
-        attachOrderListener(0);
+        setupOrderListener();
       } else {
         setLoading(false);
       }

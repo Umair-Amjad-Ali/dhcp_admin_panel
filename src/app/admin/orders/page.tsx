@@ -106,27 +106,35 @@ export default function OrdersPage() {
 
 function OrdersShimmer() {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {[1,2,3,4].map(i => <div key={i} className="h-12 bg-card-bg border border-white/5 rounded-2xl animate-pulse" />)}
-      </div>
-      <div className="bg-card-bg border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl p-6">
-         <div className="space-y-6">
-           {[1,2,3,4,5].map(i => (
-             <div key={i} className="flex items-center justify-between gap-10 opacity-30">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-white/5 animate-pulse" />
-                  <div className="space-y-2">
-                     <div className="h-2 w-32 bg-white/5 rounded-full animate-pulse" />
-                     <div className="h-1.5 w-20 bg-white/5 rounded-full animate-pulse" />
-                  </div>
-                </div>
-                <div className="h-6 w-20 bg-white/5 rounded-full animate-pulse" />
-                <div className="h-8 w-8 bg-white/5 rounded-lg animate-pulse" />
-             </div>
-           ))}
-         </div>
-      </div>
+    <div className="space-y-3">
+      {[1,2,3,4,5].map(i => (
+        <div key={i} className="bg-card-bg border border-white/2 rounded-[2rem] p-5 lg:px-8 lg:py-4 relative overflow-hidden">
+           <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/1 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+           <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-4">
+              <div className="col-span-4 flex items-center gap-4">
+                 <div className="h-12 w-12 rounded-2xl bg-white/2 shrink-0" />
+                 <div className="flex-1 space-y-2">
+                    <div className="h-3 bg-white/2 rounded w-2/3" />
+                    <div className="h-2 bg-white/2 rounded w-1/2" />
+                 </div>
+              </div>
+              <div className="col-span-3 hidden lg:block space-y-2">
+                 <div className="h-3 bg-white/2 rounded w-1/2" />
+                 <div className="h-2 bg-white/2 rounded w-full" />
+              </div>
+              <div className="col-span-2 hidden lg:block space-y-2">
+                 <div className="h-3 bg-white/2 rounded w-3/4" />
+                 <div className="h-2 bg-white/2 rounded w-1/2" />
+              </div>
+              <div className="col-span-1 hidden lg:flex justify-center">
+                 <div className="h-6 w-16 bg-white/2 rounded-full" />
+              </div>
+              <div className="col-span-2 hidden lg:flex justify-end">
+                 <div className="h-8 w-24 bg-white/2 rounded-xl" />
+              </div>
+           </div>
+        </div>
+      ))}
     </div>
   );
 }

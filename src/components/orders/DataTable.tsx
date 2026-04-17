@@ -29,98 +29,104 @@ export const DataTable = ({ orders }: DataTableProps) => {
   }
 
   return (
-    <div className="bg-card-bg border border-border-subtle rounded-[2.5rem] overflow-hidden shadow-2xl">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-border-subtle bg-white/1">
-              <th className="px-6 py-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Customer / Location</th>
-              <th className="px-6 py-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Service Insight</th>
-              <th className="px-6 py-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Timeline</th>
-              <th className="px-6 py-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Status</th>
-              <th className="px-6 py-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border-subtle">
-            {orders.map((order: any, idx: number) => (
-              <motion.tr 
-                key={order.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.03 }}
-                className="group hover:bg-white/2 transition-all cursor-default"
-              >
-                {/* Customer Column */}
-                <td className="px-6 py-5">
-                  <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand font-black text-[10px] shadow-lg group-hover:scale-110 transition-transform">
-                      {order.userDetails?.name?.[0].toUpperCase() || "U"}
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-black text-white truncate">
-                        {order.userDetails?.name || "Anonymous User"}
-                      </span>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <MapPin size={10} className="text-slate-600" />
-                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-tight truncate">
-                          {order.city || "Dubai"}, {order.country || "UAE"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </td>
+    <div className="space-y-4">
+      {/* Header - Desktop Only */}
+      <div className="hidden lg:grid grid-cols-12 gap-4 px-8 py-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] bg-card-bg/50 border border-white/5 rounded-2xl mb-2">
+        <div className="col-span-4">Customer / Location</div>
+        <div className="col-span-3">Service Insight</div>
+        <div className="col-span-2">Timeline</div>
+        <div className="col-span-1 text-center">Status</div>
+        <div className="col-span-2 text-right">Actions</div>
+      </div>
 
-                {/* Service Column */}
-                <td className="px-6 py-5">
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Wrench size={10} className="text-brand" />
-                      <span className="text-[10px] font-black text-white uppercase tracking-tighter">
-                        {order.service?.serviceType?.replace('_', ' ')}
+      <div className="space-y-3">
+        {orders.map((order: any, idx: number) => (
+          <motion.div 
+            key={order.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.03 }}
+            className="group bg-card-bg border border-white/2 rounded-[2rem] p-5 lg:px-8 lg:py-4 hover:border-brand/30 transition-all hover:shadow-2xl relative overflow-hidden"
+          >
+            <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-6 lg:gap-4">
+              
+              {/* Profile / Customer Section */}
+              <div className="col-span-4 w-full flex items-center justify-between lg:justify-start gap-4">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="h-12 w-12 shrink-0 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand font-black text-xs shadow-lg group-hover:bg-brand group-hover:text-white transition-all">
+                    {order.userDetails?.name?.[0].toUpperCase() || "U"}
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-black text-white uppercase tracking-tight truncate">
+                      {order.userDetails?.name || "Anonymous User"}
+                    </h4>
+                    <div className="flex items-center gap-1.5 mt-0.5 text-slate-500">
+                      <MapPin size={10} className="text-slate-700" />
+                      <span className="text-[9px] font-black uppercase tracking-tight truncate">
+                        {order.city || "Dubai"}, {order.country || "UAE"}
                       </span>
                     </div>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest pl-4">
-                      {order.service?.serviceSubType?.replace('_', ' ') || "Standard"}
-                    </p>
                   </div>
-                </td>
+                </div>
 
-                {/* Timeline Column */}
-                <td className="px-6 py-5">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                       <Calendar size={10} className="text-slate-600" />
-                       <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">
-                         {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : "Pending"}
-                       </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                       <Clock size={10} className="text-brand/60" />
-                       <span className="text-[9px] font-bold text-slate-500 uppercase">
-                         {order.schedule?.preferredTimeSlot || "ASAP"}
-                       </span>
-                    </div>
-                  </div>
-                </td>
-
-                {/* Status Column */}
-                <td className="px-6 py-5">
+                {/* Mobile Status Badge - Only visible on mobile here */}
+                <div className="lg:hidden">
                   <MissionBadge status={order.status || "pending"} />
-                </td>
+                </div>
+              </div>
 
-                {/* Actions Column */}
-                <td className="px-6 py-5 text-right">
-                  <Link 
-                    href={`/admin/orders/${order.id}`}
-                    className="inline-flex items-center justify-center p-2 rounded-xl bg-white/3 border border-border-subtle text-slate-400 hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-all group/btn"
-                  >
-                    <ChevronRight size={18} className="group-hover/btn:translate-x-0.5 transition-transform" />
-                  </Link>
-                </td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
+              {/* Service Details Section */}
+              <div className="col-span-3 w-full lg:w-auto flex flex-col border-t border-white/5 pt-4 lg:pt-0 lg:border-none">
+                <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest mb-2">Deployment Service</div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Wrench size={10} className="text-brand" />
+                  <span className="text-[10px] font-black text-white uppercase tracking-tighter">
+                    {order.service?.serviceType?.replace('_', ' ') || "Consultation"}
+                  </span>
+                </div>
+                <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest pl-4">
+                  {order.service?.serviceSubType?.replace('_', ' ') || "Standard Registry"}
+                </p>
+              </div>
+
+              {/* Timeline Section */}
+              <div className="col-span-2 w-full lg:w-auto flex flex-row lg:flex-col justify-between items-center lg:items-start gap-2 border-t border-white/5 pt-4 lg:pt-0 lg:border-none">
+                <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest">Temporal Log</div>
+                <div className="flex flex-col gap-1.5 lg:gap-0.5">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={10} className="text-slate-600" />
+                    <span className="text-[10px] font-black text-slate-300 uppercase tabular-nums">
+                      {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : "Historical"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock size={10} className="text-brand/60" />
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
+                      {order.schedule?.preferredTimeSlot || "ASAP Deployment"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Section (Desktop) */}
+              <div className="col-span-1 hidden lg:flex justify-center">
+                <MissionBadge status={order.status || "pending"} />
+              </div>
+
+              {/* Actions Section */}
+              <div className="col-span-2 w-full lg:w-auto flex items-center justify-end pt-4 lg:pt-0 border-t border-white/5 lg:border-none">
+                <Link 
+                  href={`/admin/orders/${order.id}`}
+                  className="w-full lg:w-auto h-10 lg:h-8 flex items-center justify-center gap-2 px-4 rounded-xl bg-white/2 border border-white/5 text-slate-400 hover:text-white hover:border-brand/40 hover:bg-brand/5 transition-all group/btn"
+                >
+                  <span className="lg:hidden text-[9px] font-black uppercase tracking-widest">Access Deployment File</span>
+                  <ChevronRight size={18} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                </Link>
+              </div>
+
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

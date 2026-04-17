@@ -19,21 +19,24 @@ export function useDashboardData() {
     async function fetchRawData() {
       try {
         setLoading(true);
-        let ordersRef = collection(db, "order");
-        let ordersSnap = await getDocs(ordersRef);
         
-        if (ordersSnap.empty) {
-          ordersRef = collection(db, "orders");
-          ordersSnap = await getDocs(ordersRef);
-        }
-
+        // Use ONLY the "orders" collection as confirmed
+        const ordersRef = collection(db, "orders");
+        const ordersSnap = await getDocs(ordersRef);
+        
         const orders = ordersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setRawOrders(orders);
 
-        const techsSnap = await getDocs(collection(db, "technicians"));
-        setActiveTechCount(techsSnap.docs.filter(d => d.data().status === "active").length);
+        // Fetch technicians separately to avoid crashing the whole dashboard if technicians aren't ready
+        try {
+          const techsSnap = await getDocs(collection(db, "technicians"));
+          setActiveTechCount(techsSnap.docs.filter(d => d.data().status === "active").length);
+        } catch (techError) {
+          console.warn("Technicians collection fetch failed:", techError);
+          setActiveTechCount(0);
+        }
       } catch (error) {
-        console.error("Dashboard Hook Error:", error);
+        console.error("Dashboard Global Fetch Error:", error);
       } finally {
         setLoading(false);
       }
@@ -66,22 +69,64 @@ export function useDashboardData() {
     let todayCount = 0;
     
     // Setup chart data structures
-    const dayCounts: { [key: string]: number } = {};
-    if (timeframe !== "all") {
+    const dayCounts: { [key: string]: { count: number, sortKey: string, label: string } } = {};
+    
+    if (timeframe === "all") {
+      if (validOrders.length > 0) {
+        // Find the earliest date
+        const dates = validOrders.map(o => o.createdAt?.toDate()).filter(d => !!d);
+        const earliest = new Date(Math.min(...dates.map(d => d.getTime())));
+        const latest = new Date(); // Go up to today
+
+        // Fill ALL months from earliest to today with 0
+        let current = new Date(earliest.getFullYear(), earliest.getMonth(), 1);
+        while (current <= latest) {
+          const year = current.getFullYear();
+          const month = current.getMonth();
+          const sortKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+          const label = current.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+          
+          dayCounts[sortKey] = { count: 0, sortKey, label };
+          current.setMonth(current.getMonth() + 1);
+        }
+
+        // Fill in actual data
+        validOrders.forEach(order => {
+          const createdAt = order.createdAt?.toDate();
+          if (createdAt) {
+            const sortKey = `${createdAt.getFullYear()}-${String(createdAt.getMonth() + 1).padStart(2, '0')}`;
+            if (dayCounts[sortKey]) {
+              dayCounts[sortKey].count++;
+            }
+          }
+        });
+      }
+    } else {
+      // Group by Day for 7d/30d
       for (let i = daysToTrack - 1; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         const label = timeframe === "30d" 
           ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
           : d.toLocaleDateString('en-US', { weekday: 'short' });
-        dayCounts[label] = 0;
+        const sortKey = d.toISOString().split('T')[0];
+        dayCounts[sortKey] = { count: 0, sortKey, label };
       }
+
+      validOrders.forEach(order => {
+        const createdAt = order.createdAt?.toDate();
+        if (createdAt) {
+          const sortKey = createdAt.toISOString().split('T')[0];
+          if (dayCounts[sortKey]) {
+            dayCounts[sortKey].count++;
+          }
+        }
+      });
     }
 
     const serviceCounts: { [key: string]: number } = {};
 
     validOrders.forEach(order => {
-      const createdAt = order.createdAt?.toDate();
       const status = order.status?.toLowerCase();
       const serviceName = order.service?.serviceType || "General";
       
@@ -90,26 +135,21 @@ export function useDashboardData() {
       else if (status === "completed") completed++;
       else if (status === "cancelled" || status === "rejected") cancelled++;
       
+      const createdAt = order.createdAt?.toDate();
       // Today count
       if (createdAt && createdAt.getTime() >= startOfToday) todayCount++;
-
-      // Area Chart (Trend)
-      if (createdAt && timeframe !== "all") {
-        const label = timeframe === "30d" 
-          ? createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          : createdAt.toLocaleDateString('en-US', { weekday: 'short' });
-        if (dayCounts.hasOwnProperty(label)) dayCounts[label]++;
-      }
 
       // Bar Chart (Services)
       serviceCounts[serviceName] = (serviceCounts[serviceName] || 0) + 1;
     });
 
     // Format final chart arrays
-    const chartData = timeframe === "all" ? [] : Object.keys(dayCounts).map(key => ({
-      name: key,
-      orders: dayCounts[key]
-    }));
+    const chartData = Object.values(dayCounts)
+      .sort((a, b) => a.sortKey.localeCompare(b.sortKey))
+      .map(item => ({
+        name: item.label,
+        orders: item.count
+      }));
 
     const topServices = Object.keys(serviceCounts)
       .map(k => ({ name: k, value: serviceCounts[k] }))

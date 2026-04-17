@@ -21,18 +21,10 @@ export function useTechnicianDetails(technicianId: string) {
         const techData = { id: snapshot.id, ...snapshot.data() };
         setTechnician(techData);
         
-        // 2. Discover and Sync Assigned Orders
-        const collectionNames = ["orders", "order"];
+        // 2. Sync Assigned Orders
+        const ordersRef = collection(db, "orders");
         
-        const attachOrderListener = (index: number) => {
-          if (index >= collectionNames.length) {
-            setLoading(false);
-            return;
-          }
-
-          const colName = collectionNames[index];
-          const ordersRef = collection(db, colName);
-          
+        const setupOrderListener = () => {
           try {
             const q = query(
               ordersRef, 
@@ -42,19 +34,14 @@ export function useTechnicianDetails(technicianId: string) {
             );
 
             unsubOrders = onSnapshot(q, (orderSnap) => {
-              if (orderSnap.empty && index < collectionNames.length - 1) {
-                unsubOrders?.();
-                attachOrderListener(index + 1);
-              } else {
-                const orderList = orderSnap.docs.map(doc => ({
-                  id: doc.id,
-                  ...doc.data()
-                }));
-                setOrders(orderList);
-                setLoading(false);
-              }
+              const orderList = orderSnap.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+              }));
+              setOrders(orderList);
+              setLoading(false);
             }, (err) => {
-              console.warn(`Complex query failed for ${colName}, falling back to simple match.`, err);
+              console.warn("Complex query failed for orders, falling back to simple match.", err);
               unsubOrders?.();
               
               const simpleQ = query(
@@ -66,14 +53,18 @@ export function useTechnicianDetails(technicianId: string) {
               unsubOrders = onSnapshot(simpleQ, (s) => {
                  setOrders(s.docs.map(d => ({id: d.id, ...d.data()})));
                  setLoading(false);
+              }, (fallbackErr) => {
+                 console.error("Critical: Orders sync failed:", fallbackErr);
+                 setLoading(false);
               });
             });
           } catch (e) {
+            console.error("Orders listener setup error:", e);
             setLoading(false);
           }
         };
 
-        attachOrderListener(0);
+        setupOrderListener();
       } else {
         setLoading(false);
       }

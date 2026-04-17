@@ -77,7 +77,7 @@ export default function DashboardPage() {
           >
             <option value="7d">Last 7 Days</option>
             <option value="30d">Last 30 Days</option>
-            <option value="all">All Time</option>
+            <option value="all">Historical Archive</option>
           </select>
           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
             <ChevronDown size={14} />
@@ -102,12 +102,12 @@ export default function DashboardPage() {
           <div className="mb-6">
             <h3 className="text-xs font-black text-white uppercase tracking-widest">Growth Analytics</h3>
             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">
-              {timeframe === "all" ? "Historical Trend not available for 'All Time'" : "Transaction Flow"}
+              Transaction Flow Trend
             </p>
           </div>
           
           <div className="h-[240px] w-full min-h-[240px] relative">
-            {chartReady && timeframe !== "all" ? (
+            {chartReady ? (
               <ResponsiveContainer width="99%" height="100%" debounce={1}>
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <defs>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
             ) : (
               <div className="w-full h-full flex items-center justify-center rounded-2xl bg-white/2 border border-white/5">
                 <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest text-center px-4">
-                  {timeframe === "all" ? "Select 7D or 30D timeframe to view trend" : "Loading metrics..."}
+                  Loading metrics...
                 </span>
               </div>
             )}

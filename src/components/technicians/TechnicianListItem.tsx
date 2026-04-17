@@ -42,7 +42,7 @@ export const TechnicianListItem = ({
   return (
     <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-4">
       {/* Identity & Mobile Location Row */}
-      <div className="col-span-3 w-full flex items-center justify-between lg:justify-start gap-4">
+      <div className="col-span-2 w-full flex items-center justify-between lg:justify-start gap-4">
         <Link 
           href={`/admin/technicians/${tech.id}`}
           className="flex items-center gap-4 min-w-0 hover:opacity-80 transition-opacity flex-1"
@@ -107,7 +107,7 @@ export const TechnicianListItem = ({
            </Badge>
         </div>
 
-        <div className="lg:col-span-1 flex justify-end gap-2 shrink-0">
+        <div className="lg:col-span-2 flex justify-end gap-2 shrink-0">
            <Tooltip content="View Intelligence Dossier">
               <Link
                 href={`/admin/technicians/${tech.id}`}
