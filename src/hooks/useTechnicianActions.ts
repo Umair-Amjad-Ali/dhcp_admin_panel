@@ -12,6 +12,9 @@ export function useTechnicianActions() {
     setStatusLoading(tech.id);
     try {
       let finalStatus = newStatus;
+      let updates: any = {
+        updatedAt: serverTimestamp()
+      };
 
       // Logic check for Activation: Should they be Active or Busy?
       if (newStatus === "active") {
@@ -23,16 +26,18 @@ export function useTechnicianActions() {
         );
         const orderSnap = await getDocs(q);
 
-        if (!orderSnap.empty) {
+        const activeJobsCount = orderSnap.size;
+        updates.activeJobsCount = activeJobsCount;
+
+        if (activeJobsCount >= 5) {
           finalStatus = "busy";
         }
       }
 
+      updates.status = finalStatus;
+
       const techRef = doc(db, "technicians", tech.id);
-      await updateDoc(techRef, {
-        status: finalStatus,
-        updatedAt: serverTimestamp()
-      });
+      await updateDoc(techRef, updates);
       
       toast.success(
         finalStatus === "active" 

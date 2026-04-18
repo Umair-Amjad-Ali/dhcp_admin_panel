@@ -3,12 +3,12 @@
 import React from "react";
 import { 
   BarChart3, Users, Clock, CheckCircle2, XCircle, 
-  MapPin, Calendar, Activity, ChevronDown
+  MapPin, Calendar, Activity, ChevronDown, DollarSign
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, BarChart, Bar
+  PieChart, Pie, Cell, BarChart, Bar, ComposedChart, Line, Legend
 } from "recharts";
 import { Badge } from "@/components/ui/Badge";
 import { motion } from "framer-motion";
@@ -69,28 +69,29 @@ export default function DashboardPage() {
         </div>
 
         {/* Timeframe Selector */}
-        <div className="relative inline-flex">
+        <div className="relative flex w-full md:w-auto">
           <select 
             value={timeframe}
             onChange={(e) => setTimeframe(e.target.value as Timeframe)}
-            className="appearance-none bg-card-bg border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl pl-4 pr-10 py-2.5 focus:outline-none focus:border-brand cursor-pointer transition-colors"
+            className="w-full appearance-none bg-card-bg border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl pl-4 pr-10 py-3 focus:outline-none focus:border-brand cursor-pointer transition-colors"
           >
             <option value="7d">Last 7 Days</option>
             <option value="30d">Last 30 Days</option>
             <option value="all">Historical Archive</option>
           </select>
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-brand">
             <ChevronDown size={14} />
           </div>
         </div>
       </div>
 
-      {/* Top Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <MissionMetric variant="dashboard" label="Total Orders" value={stats.total} icon={<BarChart3 />} color="blue" />
+      {/* Top Stats Dashboard */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <MissionMetric variant="dashboard" label="Revenue" value={stats.totalAct?.toLocaleString()} icon={<DollarSign />} color="emerald" />
+        <MissionMetric variant="dashboard" label="Pipeline" value={stats.totalEst?.toLocaleString()} icon={<Activity />} color="blue" />
+        <MissionMetric variant="dashboard" label="Total Orders" value={stats.total} icon={<BarChart3 />} color="slate" />
         <MissionMetric variant="dashboard" label="Pending" value={stats.pending} icon={<Clock />} color="amber" />
         <MissionMetric variant="dashboard" label="Completed" value={stats.completed} icon={<CheckCircle2 />} color="emerald" />
-        <MissionMetric variant="dashboard" label="Cancelled" value={stats.cancelled} icon={<XCircle />} color="red" />
         <MissionMetric variant="dashboard" label="Today" value={stats.today} icon={<Activity />} color="purple" />
       </div>
 
@@ -109,23 +110,27 @@ export default function DashboardPage() {
           <div className="h-[240px] w-full min-h-[240px] relative">
             {chartReady ? (
               <ResponsiveContainer width="99%" height="100%" debounce={1}>
-                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="colorO" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    <linearGradient id="colorAct" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff03" vertical={false} />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 9, fontWeight: 900 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 9, fontWeight: 900 }} />
+                  <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 9, fontWeight: 900 }} />
+                  <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 8, fontWeight: 900 }} hide />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '10px', fontSize: '10px', fontWeight: 900, color: '#fff' }}
-                    itemStyle={{ color: '#3b82f6' }}
-                    labelStyle={{ color: '#94a3b8' }}
+                    itemStyle={{ fontSize: '9px', fontWeight: 900, padding: 0 }}
                   />
-                  <Area type="monotone" dataKey="orders" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorO)" />
-                </AreaChart>
+                  <Legend verticalAlign="top" height={36} iconType="circle" formatter={(value) => <span className="text-[8px] font-black uppercase text-slate-500 tracking-widest">{value}</span>} />
+                  
+                  <Bar yAxisId="left" dataKey="orders" fill="#f59e0b20" radius={[4, 4, 0, 0]} name="Order Vol" />
+                  <Area yAxisId="right" type="monotone" dataKey="estimated" stroke="#3b82f6" strokeWidth={1} strokeDasharray="3 3" fillOpacity={0} name="Est. Rev" />
+                  <Area yAxisId="right" type="monotone" dataKey="actual" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorAct)" name="Settled Rev" />
+                </ComposedChart>
               </ResponsiveContainer>
             ) : (
               <div className="w-full h-full flex items-center justify-center rounded-2xl bg-white/2 border border-white/5">

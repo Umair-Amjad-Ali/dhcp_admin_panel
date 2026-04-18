@@ -95,16 +95,22 @@ export const TechnicianListItem = ({
       </div>
 
       {/* Jobs Column (Desktop Only) */}
-      <div className="col-span-1 hidden lg:block text-center">
-         <span className="text-xs font-black text-white tabular-nums">{tech.completedJobs || 0}</span>
+      <div className="col-span-1 hidden lg:flex flex-col items-center justify-center">
+         <span className="text-xs font-black text-white tabular-nums" title="Completed Jobs">{tech.completedJobs || 0}</span>
+         <span className="text-[7px] font-black text-brand uppercase tracking-widest mt-0.5" title="Active Jobs Limit">
+           {tech.activeJobsCount || 0}/5 ACTIVE
+         </span>
       </div>
 
       {/* Status & Actions Hub (Mobile Optimized) */}
       <div className="w-full lg:col-span-2 flex items-center justify-between lg:contents pt-3 lg:pt-0 border-t border-white/5 lg:border-t-0">
-        <div className="lg:col-span-1 flex lg:justify-center">
-           <Badge className={cn("px-2.5 py-1 rounded-full text-[7px] font-black uppercase border-none", getStatusStyles(tech.status))}>
+        <div className="lg:col-span-1 flex lg:justify-center items-center gap-2">
+           <Badge className={cn("px-2.5 py-1 rounded-full text-[7px] font-black uppercase border-none shrink-0", getStatusStyles(tech.status))}>
               {tech.status || "Pending"}
            </Badge>
+           <span className="lg:hidden text-[7px] font-black text-brand uppercase tracking-widest shrink-0 whitespace-nowrap">
+             {tech.activeJobsCount || 0}/5 ACTIVE
+           </span>
         </div>
 
         <div className="lg:col-span-2 flex justify-end gap-2 shrink-0">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { collection, getDocs, orderBy, limit, query } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, limit, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export type Timeframe = "7d" | "30d" | "all";
@@ -14,34 +14,33 @@ export function useDashboardData() {
   const [rawOrders, setRawOrders] = useState<any[]>([]);
   const [activeTechCount, setActiveTechCount] = useState(0);
 
-  // 1. Fetch raw data ONCE on mount
+  // 1. Real-time Listeners
   useEffect(() => {
-    async function fetchRawData() {
-      try {
-        setLoading(true);
-        
-        // Use ONLY the "orders" collection as confirmed
-        const ordersRef = collection(db, "orders");
-        const ordersSnap = await getDocs(ordersRef);
-        
-        const orders = ordersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setRawOrders(orders);
+    setLoading(true);
+    
+    // Orders Listener
+    const ordersRef = collection(db, "orders");
+    const unsubscribeOrders = onSnapshot(ordersRef, (snapshot) => {
+      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setRawOrders(orders);
+      setLoading(false);
+    }, (error) => {
+      console.error("Dashboard Orders Sync Error:", error);
+      setLoading(false);
+    });
 
-        // Fetch technicians separately to avoid crashing the whole dashboard if technicians aren't ready
-        try {
-          const techsSnap = await getDocs(collection(db, "technicians"));
-          setActiveTechCount(techsSnap.docs.filter(d => d.data().status === "active").length);
-        } catch (techError) {
-          console.warn("Technicians collection fetch failed:", techError);
-          setActiveTechCount(0);
-        }
-      } catch (error) {
-        console.error("Dashboard Global Fetch Error:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchRawData();
+    // Technicians Listener
+    const techsRef = collection(db, "technicians");
+    const unsubscribeTechs = onSnapshot(techsRef, (snapshot) => {
+      setActiveTechCount(snapshot.docs.filter(d => d.data().status === "active").length);
+    }, (error) => {
+      console.warn("Technicians Sync Error:", error);
+    });
+
+    return () => {
+      unsubscribeOrders();
+      unsubscribeTechs();
+    };
   }, []);
 
   // 2. Process data whenever rawOrders or timeframe changes
@@ -67,9 +66,11 @@ export function useDashboardData() {
     let completed = 0;
     let cancelled = 0;
     let todayCount = 0;
+    let totalEst = 0;
+    let totalAct = 0;
     
     // Setup chart data structures
-    const dayCounts: { [key: string]: { count: number, sortKey: string, label: string } } = {};
+    const dayCounts: { [key: string]: { count: number, est: number, act: number, sortKey: string, label: string } } = {};
     
     if (timeframe === "all") {
       if (validOrders.length > 0) {
@@ -86,7 +87,7 @@ export function useDashboardData() {
           const sortKey = `${year}-${String(month + 1).padStart(2, '0')}`;
           const label = current.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
           
-          dayCounts[sortKey] = { count: 0, sortKey, label };
+          dayCounts[sortKey] = { count: 0, est: 0, act: 0, sortKey, label };
           current.setMonth(current.getMonth() + 1);
         }
 
@@ -96,7 +97,11 @@ export function useDashboardData() {
           if (createdAt) {
             const sortKey = `${createdAt.getFullYear()}-${String(createdAt.getMonth() + 1).padStart(2, '0')}`;
             if (dayCounts[sortKey]) {
+              const est = parseFloat(order.service?.estimatedPrice || order.estimatedPrice || 0);
+              const act = parseFloat(order.finalPrice || 0);
               dayCounts[sortKey].count++;
+              dayCounts[sortKey].est += est;
+              dayCounts[sortKey].act += (order.status === "completed" ? act : 0);
             }
           }
         });
@@ -110,7 +115,7 @@ export function useDashboardData() {
           ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
           : d.toLocaleDateString('en-US', { weekday: 'short' });
         const sortKey = d.toISOString().split('T')[0];
-        dayCounts[sortKey] = { count: 0, sortKey, label };
+        dayCounts[sortKey] = { count: 0, est: 0, act: 0, sortKey, label };
       }
 
       validOrders.forEach(order => {
@@ -118,7 +123,11 @@ export function useDashboardData() {
         if (createdAt) {
           const sortKey = createdAt.toISOString().split('T')[0];
           if (dayCounts[sortKey]) {
+            const est = parseFloat(order.service?.estimatedPrice || order.estimatedPrice || 0);
+            const act = parseFloat(order.finalPrice || 0);
             dayCounts[sortKey].count++;
+            dayCounts[sortKey].est += est;
+            dayCounts[sortKey].act += (order.status === "completed" ? act : 0);
           }
         }
       });
@@ -129,6 +138,14 @@ export function useDashboardData() {
     validOrders.forEach(order => {
       const status = order.status?.toLowerCase();
       const serviceName = order.service?.serviceType || "General";
+      
+      const estPrice = parseFloat(order.service?.estimatedPrice || order.estimatedPrice || 0);
+      const actPrice = parseFloat(order.finalPrice || 0);
+
+      totalEst += estPrice;
+      if (status === "completed") {
+        totalAct += actPrice;
+      }
       
       // Stats
       if (status === "pending" || status === "in-progress") pending++;
@@ -148,7 +165,9 @@ export function useDashboardData() {
       .sort((a, b) => a.sortKey.localeCompare(b.sortKey))
       .map(item => ({
         name: item.label,
-        orders: item.count
+        orders: item.count,
+        estimated: Math.round(item.est),
+        actual: Math.round(item.act)
       }));
 
     const topServices = Object.keys(serviceCounts)
@@ -163,11 +182,10 @@ export function useDashboardData() {
     ].filter(s => s.value > 0);
 
     return {
-      stats: { total: validOrders.length, pending, completed, cancelled, today: todayCount, activeTechs: activeTechCount },
+      stats: { total: validOrders.length, pending, completed, cancelled, today: todayCount, activeTechs: activeTechCount, totalEst, totalAct },
       chartData,
       topServices,
       statusChartData,
-      // Recent orders now STRICTLY respects the timeframe validOrders
       recentOrders: validOrders.sort((a,b) => (b.createdAt?.toDate()?.getTime() || 0) - (a.createdAt?.toDate()?.getTime() || 0)).slice(0, 5)
     };
   }, [rawOrders, timeframe, activeTechCount]);

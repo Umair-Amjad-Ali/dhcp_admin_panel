@@ -1,4 +1,6 @@
 "use client";
+// Force rebuild - 19.4.26
+
 
 import React, { useState } from "react";
 import { useOrders } from "@/hooks/useOrders";
@@ -141,7 +143,7 @@ function OrdersShimmer() {
 
 function PaginationControl({ loadingMore, onLoadMore }: { loadingMore: boolean, onLoadMore: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-4 py-8">
+    <div className="flex flex-col items-center gap-4 py-4">
       <button 
         onClick={onLoadMore}
         disabled={loadingMore}

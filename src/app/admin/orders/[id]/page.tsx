@@ -12,11 +12,13 @@ import { FinancialsCard } from "@/components/orders/details/FinancialsCard";
 import { SpecialistCard } from "@/components/orders/details/SpecialistCard";
 import { OrderDetailsShimmer } from "@/components/orders/details/OrderDetailsShimmer";
 import { AssignTechModal } from "@/components/orders/AssignTechModal";
+import { CompleteJobModal } from "@/components/orders/CompleteJobModal";
 
 export default function OrderDetailsPage() {
   const { id } = useParams();
   const { order, loading, updateStatus, syncingAction } = useOrderDetails(id as string);
   const [isTechModalOpen, setIsTechModalOpen] = useState(false);
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
 
   if (loading) return <OrderDetailsShimmer />;
 
@@ -29,6 +31,13 @@ export default function OrderDetailsPage() {
     );
   }
 
+  const handleJobCompletion = async (data: { finalPrice: number, workReport: string }) => {
+     const success = await updateStatus("completed", data);
+     if (success) {
+        setIsCompleteModalOpen(false);
+     }
+  };
+
   return (
     <div className="space-y-6 pb-20 max-w-7xl mx-auto">
       <OrderHeader 
@@ -36,6 +45,7 @@ export default function OrderDetailsPage() {
         syncingAction={syncingAction} 
         onUpdateStatus={updateStatus}
         onOpenTechModal={() => setIsTechModalOpen(true)}
+        onOpenCompleteModal={() => setIsCompleteModalOpen(true)}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -58,6 +68,14 @@ export default function OrderDetailsPage() {
         onClose={() => setIsTechModalOpen(false)} 
         orderId={order.id}
         previousTechId={order.assignedTechId}
+      />
+
+      <CompleteJobModal 
+        isOpen={isCompleteModalOpen}
+        onClose={() => setIsCompleteModalOpen(false)}
+        order={order}
+        onComplete={handleJobCompletion}
+        isSubmitting={syncingAction === "completing"}
       />
     </div>
   );

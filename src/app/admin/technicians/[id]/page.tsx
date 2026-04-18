@@ -98,9 +98,12 @@ export default function TechnicianDetailsPage() {
               </div>
               
               <div className="space-y-4">
-                 <div>
+                 <div className="flex items-center gap-2">
                     <Badge className={cn("px-3 py-1 rounded-full text-[8px] font-black uppercase border-none", getStatusStyles(technician.status))}>
                        {technician.status || "Active"}
+                    </Badge>
+                    <Badge className="px-3 py-1 bg-brand/10 text-brand rounded-full text-[8px] font-black uppercase border-none">
+                       {technician.activeJobsCount || 0}/5 Active
                     </Badge>
                  </div>
                  
@@ -163,8 +166,8 @@ export default function TechnicianDetailsPage() {
               />
            </div>
 
-           {/* Active Deployment (If Busy) */}
-           {technician.status?.toLowerCase() === "busy" && (
+           {/* Active Deployment */}
+           {(technician.activeJobsCount || 0) > 0 && (
               <Card className="p-6 bg-amber-500/5 border-amber-500/10 rounded-3xl relative overflow-hidden group">
                  <div className="absolute top-0 right-0 p-8 text-amber-500/5 group-hover:rotate-12 transition-transform">
                     <Clock size={120} />
@@ -173,8 +176,13 @@ export default function TechnicianDetailsPage() {
                     <h3 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-4 italic">Live Deployment</h3>
                     <div className="flex items-center justify-between">
                        <div>
-                          <p className="text-lg font-black text-white uppercase italic tracking-tight">Active Operation In Progress</p>
-                          <p className="text-[9px] text-slate-600 font-bold mt-1 uppercase tracking-widest">Specialist is currently deployed on the field</p>
+                          <p className="text-lg font-black text-white uppercase italic tracking-tight">
+                             {technician.activeJobsCount} Active {technician.activeJobsCount === 1 ? 'Operation' : 'Operations'} In Progress
+                          </p>
+                          <p className="text-[9px] text-slate-600 font-bold mt-1 uppercase tracking-widest flex items-center gap-2">
+                             Specialist is deployed on the field 
+                             <span className="text-brand">({technician.activeJobsCount}/5 Capacity)</span>
+                          </p>
                        </div>
                     </div>
                  </div>

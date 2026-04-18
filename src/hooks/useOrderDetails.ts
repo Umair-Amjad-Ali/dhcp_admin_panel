@@ -24,14 +24,22 @@ export function useOrderDetails(id: string) {
     return () => unsub();
   }, [id]);
 
-  const updateStatus = async (newStatus: string) => {
+  const updateStatus = async (newStatus: string, completionData?: { finalPrice: number, workReport: string }) => {
     const actionKey = newStatus === "completed" ? "completing" : "cancelling";
     setSyncingAction(actionKey);
     try {
-      await updateDoc(doc(db, "orders", id), { 
+      const updates: any = { 
         status: newStatus,
         updatedAt: serverTimestamp()
-      });
+      };
+
+      if (completionData) {
+        updates.finalPrice = completionData.finalPrice;
+        updates.workReport = completionData.workReport;
+        updates.completedAt = serverTimestamp();
+      }
+
+      await updateDoc(doc(db, "orders", id), updates);
 
       // Specialist Release Protocol
       if ((newStatus === "completed" || newStatus === "cancelled") && order?.assignedTechId) {
@@ -39,11 +47,16 @@ export function useOrderDetails(id: string) {
          const techSnap = await getDoc(techRef);
          
          if (techSnap.exists()) {
-            const currentTechStatus = techSnap.data().status?.toLowerCase();
+            const techData = techSnap.data();
+            const currentTechStatus = techData.status?.toLowerCase();
             const finalStatus = currentTechStatus === "suspended" ? "suspended" : "active";
+            
+            const currentJobsCount = techData.activeJobsCount || 0;
+            const newJobsCount = Math.max(0, currentJobsCount - 1);
             
             const updates: any = {
                status: finalStatus,
+               activeJobsCount: newJobsCount,
                updatedAt: serverTimestamp()
             };
 

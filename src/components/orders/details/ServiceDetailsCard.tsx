@@ -62,10 +62,10 @@ export const ServiceDetailsCard = ({ order }: ServiceDetailsCardProps) => {
                </div>
                <div className="bg-white/2 border border-white/5 rounded-2xl p-4">
                   <h4 className="text-[11px] font-black text-white uppercase tracking-wider mb-2">
-                    {order.issue?.label?.replace(/_/g, " ") || "No Label Provided"}
+                    {order.service?.issue?.label?.replace(/_/g, " ") || order.issue?.label?.replace(/_/g, " ") || "No Label Provided"}
                   </h4>
                   <p className="text-xs text-slate-500 font-bold leading-relaxed">
-                    {order.issue?.customDescription || order.customDescription || "No custom intelligence logged."}
+                    {order.service?.issue?.customDescription || order.issue?.customDescription || order.customDescription || "No custom intelligence logged."}
                   </p>
                </div>
             </div>
@@ -76,8 +76,8 @@ export const ServiceDetailsCard = ({ order }: ServiceDetailsCardProps) => {
                   <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Extended diagnostics</span>
                </div>
                <div className="flex flex-wrap gap-2">
-                  {order.selectedIssues && order.selectedIssues.length > 0 ? (
-                    order.selectedIssues.map((issue: string, index: number) => (
+                  {(order.service?.selectedIssues || order.selectedIssues || []).length > 0 ? (
+                    (order.service?.selectedIssues || order.selectedIssues).map((issue: string, index: number) => (
                       <Badge key={index} className="bg-blue-500/5 text-blue-400 border border-blue-500/10 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase italic">
                         {issue.replace(/_/g, " ")}
                       </Badge>
@@ -88,10 +88,31 @@ export const ServiceDetailsCard = ({ order }: ServiceDetailsCardProps) => {
                </div>
                <div className="pt-2">
                   <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest mb-1">Hardware Type</p>
-                  <p className="text-[11px] font-black text-white uppercase italic">{order.type?.replace(/_/g, " ") || "Generic"}</p>
+                  <p className="text-[11px] font-black text-white uppercase italic">{order.service?.type?.replace(/_/g, " ") || order.type?.replace(/_/g, " ") || "Generic"}</p>
                </div>
             </div>
          </div>
+
+         {order.workReport && (
+            <div className="mt-4 relative overflow-hidden rounded-[1.2rem] bg-emerald-500/5 border border-emerald-500/10 py-3 px-5 group/report">
+               <div className="absolute -right-2 -bottom-2 text-emerald-500/5 group-hover/report:scale-110 transition-transform duration-700">
+                  <Activity size={60} strokeWidth={1} />
+               </div>
+               <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-3">
+                  <div className="flex items-center gap-2 shrink-0">
+                     <div className="h-6 w-6 rounded-lg bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
+                        <Activity size={10} />
+                     </div>
+                     <h4 className="text-[9px] font-black text-emerald-500 uppercase tracking-widest leading-none italic">Execution Report</h4>
+                  </div>
+                  <div className="flex-1 bg-white/2 border border-white/5 rounded-xl px-3 py-2">
+                     <p className="text-[10px] text-slate-200 font-bold leading-normal italic">
+                        "{order.workReport}"
+                     </p>
+                  </div>
+               </div>
+            </div>
+         )}
 
          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6">
             <HistoryBlock label="Target Date" icon={<Calendar size={12} className="text-brand"/>} value={order.schedule?.preferredDate ? new Date(order.schedule.preferredDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : "TBD"} />

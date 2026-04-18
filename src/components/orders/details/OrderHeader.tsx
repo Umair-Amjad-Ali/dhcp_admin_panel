@@ -1,20 +1,22 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft, Loader2, CheckCircle2, XCircle, UserPlus } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle2, XCircle, UserPlus, Printer } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { generateOrderReceipt } from "@/lib/invoiceGenerator";
 
 interface OrderHeaderProps {
   order: any;
   syncingAction: string | null;
   onUpdateStatus: (status: string) => void;
   onOpenTechModal: () => void;
+  onOpenCompleteModal: () => void;
 }
 
-export const OrderHeader = ({ order, syncingAction, onUpdateStatus, onOpenTechModal }: OrderHeaderProps) => {
+export const OrderHeader = ({ order, syncingAction, onUpdateStatus, onOpenTechModal, onOpenCompleteModal }: OrderHeaderProps) => {
   const router = useRouter();
   const status = order.status?.toLowerCase();
   
@@ -45,7 +47,7 @@ export const OrderHeader = ({ order, syncingAction, onUpdateStatus, onOpenTechMo
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 border-b border-white/5 pb-6">
       <div className="flex items-center gap-4">
-        <button onClick={() => router.back()} className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors border border-white/5">
+        <button onClick={() => router.back()} className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors border border-white/5 cursor-pointer">
           <ArrowLeft size={18} />
         </button>
         <div>
@@ -66,6 +68,16 @@ export const OrderHeader = ({ order, syncingAction, onUpdateStatus, onOpenTechMo
                {displayedStatus}
             </Badge>
          </div>
+
+         {displayedStatus === "completed" && (
+            <button 
+               onClick={() => generateOrderReceipt(order)}
+               className="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black text-slate-400 uppercase tracking-widest hover:bg-brand hover:text-white hover:border-brand transition-all shadow-xl group"
+            >
+               <Printer size={14} className="group-hover:scale-110 transition-transform" />
+               <span className="hidden sm:inline">Download Receipt</span>
+            </button>
+         )}
 
          {!isDisplayFinalized && (
            <>
@@ -90,9 +102,9 @@ export const OrderHeader = ({ order, syncingAction, onUpdateStatus, onOpenTechMo
               {displayedStatus === "in-progress" && (
                 <Tooltip content="Finalize job">
                   <button 
-                    onClick={() => onUpdateStatus("completed")}
+                    onClick={onOpenCompleteModal}
                     disabled={!!syncingAction}
-                    className="flex items-center gap-2 px-6 py-3 bg-emerald-600 rounded-xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-xl active:scale-95 disabled:opacity-50 h-[42px] min-w-[140px] justify-center"
+                    className="flex items-center gap-2 px-6 py-3 bg-emerald-600 rounded-xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-xl active:scale-95 disabled:opacity-50 h-[42px] min-w-[140px] justify-center cursor-pointer"
                   >
                     {syncingAction === "completing" ? (
                       <>
@@ -113,7 +125,7 @@ export const OrderHeader = ({ order, syncingAction, onUpdateStatus, onOpenTechMo
                 <button 
                   onClick={() => onUpdateStatus("cancelled")}
                   disabled={!!syncingAction}
-                  className="flex items-center justify-center w-[42px] h-[42px] bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 hover:bg-rose-500 hover:text-white transition-all active:scale-95 disabled:opacity-50"
+                  className="flex items-center justify-center w-[42px] h-[42px] bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 hover:bg-rose-500 hover:text-white transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   {syncingAction === "cancelling" ? <Loader2 size={16} className="animate-spin" /> : <XCircle size={16} />}
                 </button>

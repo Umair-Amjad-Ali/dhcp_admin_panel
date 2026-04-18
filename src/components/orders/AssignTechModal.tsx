@@ -13,7 +13,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp, increment } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
 
@@ -32,19 +32,37 @@ export const AssignTechModal = ({ isOpen, onClose, orderId, onAssigned, previous
   const [searchQuery, setSearchQuery] = useState("");
   const [assigning, setAssigning] = useState<string | null>(null);
 
-  const availableTechs = technicians.filter(tech => 
-    tech.status?.toLowerCase() === "active" && 
-    (tech.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    tech.skills?.some((s: string) => s.toLowerCase().includes(searchQuery.toLowerCase())))
-  );
+  const getActiveJobsCount = (tech: any) => tech.activeJobsCount || 0;
+
+  const availableTechs = technicians.filter(tech => {
+    const isSuspended = tech.status?.toLowerCase() === "suspended";
+    const jobsCount = getActiveJobsCount(tech);
+    const isWithinLimit = jobsCount < 5;
+    
+    // Tech must not be suspended and must have less than 5 jobs
+    const isEligible = !isSuspended && isWithinLimit;
+
+    const matchesSearch = tech.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          tech.skills?.some((s: string) => s.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return isEligible && matchesSearch;
+  });
 
   const handleAssign = async (tech: any) => {
     setAssigning(tech.id);
     try {
       if (previousTechId && previousTechId !== tech.id) {
+        const prevTech = technicians.find(t => t.id === previousTechId);
+        const prevTechStatus = prevTech?.status?.toLowerCase();
+        const finalPrevStatus = prevTechStatus === "suspended" ? "suspended" : "active";
+
+        const currentJobs = prevTech?.activeJobsCount || 0;
+        const newPrevJobsCount = Math.max(0, currentJobs - 1);
+
         const prevTechRef = doc(db, "technicians", previousTechId);
         await updateDoc(prevTechRef, {
-          status: "active",
+          status: finalPrevStatus,
+          activeJobsCount: newPrevJobsCount,
           updatedAt: serverTimestamp()
         }).catch(e => console.error("Previous Tech Revert Error:", e));
       }
@@ -59,9 +77,13 @@ export const AssignTechModal = ({ isOpen, onClose, orderId, onAssigned, previous
         assignedAt: serverTimestamp()
       });
 
+      const currentJobs = getActiveJobsCount(tech);
+      const newStatus = (currentJobs + 1) >= 5 ? "busy" : "active";
+
       const techRef = doc(db, "technicians", tech.id);
       await updateDoc(techRef, {
-        status: "busy",
+        status: newStatus,
+        activeJobsCount: increment(1),
         updatedAt: serverTimestamp()
       }).catch(e => console.error("Tech Availability Update Error:", e));
 
@@ -133,6 +155,7 @@ export const AssignTechModal = ({ isOpen, onClose, orderId, onAssigned, previous
                       <ShieldCheck size={10} />
                       <span className="text-[7px] font-black uppercase">Approved</span>
                    </div>
+                   <div className="text-[9px] font-black tracking-widest text-brand mt-1 uppercase">Jobs: {getActiveJobsCount(tech)}/5</div>
                    {assigning === tech.id ? (
                      <div className="h-4 w-4 border-2 border-brand/20 border-t-brand animate-spin rounded-full" />
                    ) : (

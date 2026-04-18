@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MissionMetric } from "@/components/common/MissionMetric";
-import { MissionBadge } from "@/components/common/MissionBadge";
 import { RegistryLayout } from "@/components/common/RegistryLayout";
 import Link from "next/link";
 
