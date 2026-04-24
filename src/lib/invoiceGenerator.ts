@@ -341,5 +341,5 @@ export const generateOrderReceipt = (order: any) => {
   );
 
   // ─── Save ────────────────────────────────────────────────────────────────
-  doc.save(`DHCP_RECEIPT_${safeId(order.id)}.pdf`);
+  doc.save(`DHS_RECEIPT_${safeId(order.id)}.pdf`);
 };

@@ -60,7 +60,7 @@ export const AdminSidebar = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-black text-lg tracking-tighter text-white leading-none">
-                DHCP
+                DHS
               </span>
               <span className="text-[8px] font-black uppercase tracking-[0.3em] text-brand mt-0.5">
                 Admin

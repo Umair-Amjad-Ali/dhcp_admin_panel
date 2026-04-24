@@ -71,7 +71,7 @@ function LoginPageContent() {
                   animate={{ opacity: 1, y: 0 }}
                   className="text-3xl font-black text-white leading-tight tracking-tight mb-4"
                 >
-                  DHCP Admin <br />
+                  DHS Admin <br />
                   <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-blue-600">
                     Control Center.
                   </span>
