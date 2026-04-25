@@ -81,7 +81,7 @@ export const generateOrderReceipt = (order: any) => {
   doc.setFontSize(20);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...C.headerText);
-  doc.text('Dammam Home Care Pro', ML + 2, 22);
+  doc.text('Dammam Home Service', ML + 2, 22);
 
   // Tagline
   doc.setFontSize(7.5);
@@ -312,7 +312,7 @@ export const generateOrderReceipt = (order: any) => {
   doc.setTextColor(...C.bodyText);
   const payNote = [
     'Transaction processed and verified by',
-    'Dammam Home Care Pro Registry.',
+    'Dammam Home Service Registry.',
     'Mission status successfully finalized.',
   ];
   doc.text(payNote, ML, Y + 18);

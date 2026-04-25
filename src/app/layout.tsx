@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dammam Home Care pro Admin",
-  description: "Dammam Home Care pro Admin panel",
+  title: "Dammam Home Service Admin",
+  description: "Dammam Home Service Admin panel",
 };
 
 export default function RootLayout({

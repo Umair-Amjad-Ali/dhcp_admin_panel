@@ -1,11 +1,14 @@
 "use client";
 import { useUIStore } from "@/store/useUIStore";
-import { Menu, Search, Bell, Command } from "lucide-react";
+import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useFCM } from "@/hooks/useFCM";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 
 export const AdminTopbar = () => {
   const { toggleSidebar } = useUIStore();
   const pathname = usePathname();
+  useFCM();
 
   const pageTitle = pathname.split("/").pop()?.replace(/-/g, " ") || "Dashboard";
 
@@ -27,14 +30,8 @@ export const AdminTopbar = () => {
         </div>
       </div>
       
-      <div className="flex items-center gap-6">
-        {/* Minimal Actions */}
-        {/* <div className="flex items-center gap-2">
-          <button className="p-2 text-slate-400 hover:text-brand transition-all relative">
-            <Bell size={18} />
-            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-brand rounded-full border border-card-bg" />
-          </button>
-        </div> */}
+      <div className="flex items-center gap-2">
+        <NotificationBell />
       </div>
     </header>
   );

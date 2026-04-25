@@ -1,27 +1,64 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { doc, onSnapshot, updateDoc, increment, serverTimestamp, getDoc } from "firebase/firestore";
+import { 
+  doc, 
+  onSnapshot, 
+  updateDoc, 
+  increment, 
+  serverTimestamp, 
+  getDoc,
+  collection,
+  query,
+  where,
+  limit
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
 
 export function useOrderDetails(id: string) {
   const [order, setOrder] = useState<any>(null);
+  const [review, setReview] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [syncingAction, setSyncingAction] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
 
+    // Fetch Order
     const docRef = doc(db, "orders", id);
-    const unsub = onSnapshot(docRef, (snapshot) => {
+    const unsubOrder = onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
         setOrder({ id: snapshot.id, ...snapshot.data() });
         setLoading(false);
       }
     });
 
-    return () => unsub();
+    // Fetch Review for this Order
+    const reviewsRef = collection(db, "reviews");
+    const q = query(reviewsRef, where("orderId", "==", id), limit(1));
+    const unsubReview = onSnapshot(q, async (snapshot) => {
+      if (!snapshot.empty) {
+        const reviewData = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() as any };
+        
+        // Fetch user profile for the review
+        if (reviewData.userId) {
+          const userSnap = await getDoc(doc(db, "users", reviewData.userId));
+          if (userSnap.exists()) {
+            reviewData.userProfile = userSnap.data();
+          }
+        }
+        
+        setReview(reviewData);
+      } else {
+        setReview(null);
+      }
+    });
+
+    return () => {
+      unsubOrder();
+      unsubReview();
+    };
   }, [id]);
 
   const updateStatus = async (newStatus: string, completionData?: { finalPrice: number, workReport: string }) => {
@@ -85,5 +122,5 @@ export function useOrderDetails(id: string) {
     }
   };
 
-  return { order, loading, updateStatus, syncingAction };
+  return { order, review, loading, updateStatus, syncingAction };
 }

@@ -10,13 +10,14 @@ import { LocationDetailsCard } from "@/components/orders/details/LocationDetails
 import { ClientInfoCard } from "@/components/orders/details/ClientInfoCard";
 import { FinancialsCard } from "@/components/orders/details/FinancialsCard";
 import { SpecialistCard } from "@/components/orders/details/SpecialistCard";
+import { OrderReviewCard } from "@/components/orders/details/OrderReviewCard";
 import { OrderDetailsShimmer } from "@/components/orders/details/OrderDetailsShimmer";
 import { AssignTechModal } from "@/components/orders/AssignTechModal";
 import { CompleteJobModal } from "@/components/orders/CompleteJobModal";
 
 export default function OrderDetailsPage() {
   const { id } = useParams();
-  const { order, loading, updateStatus, syncingAction } = useOrderDetails(id as string);
+  const { order, review, loading, updateStatus, syncingAction } = useOrderDetails(id as string);
   const [isTechModalOpen, setIsTechModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
 
@@ -50,10 +51,11 @@ export default function OrderDetailsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Intel Column */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 flex flex-col gap-6">
            <ServiceDetailsCard order={order} />
            <LocationDetailsCard order={order} />
            <SpecialistCard order={order} />
+           {review && <OrderReviewCard review={review} />}
         </div>
 
         {/* Right Authority Column */}
