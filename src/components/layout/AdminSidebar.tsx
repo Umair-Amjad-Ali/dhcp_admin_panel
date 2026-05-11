@@ -12,7 +12,8 @@ import {
   Settings,
   LogOut,
   ChevronRight,
-  Star
+  Star,
+  BookText
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,6 +23,7 @@ const navItems = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { label: "Reviews", href: "/admin/reviews", icon: Star },
+  { label: "Blogs", href: "/admin/blogs", icon: BookText },
   { label: "Technicians", href: "/admin/technicians", icon: Wrench },
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Settings", href: "/admin/settings", icon: Settings },

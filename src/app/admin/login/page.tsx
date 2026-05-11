@@ -175,7 +175,7 @@ function LoginPageContent() {
 
                 <div className="mt-14 pt-6 border-t border-zinc-900/50 text-center">
                   <p className="text-[8px] font-black text-zinc-700 uppercase tracking-[0.3em]">
-                    Fixora Admin Core v2.8
+                    DHS Admin Core v2.8
                   </p>
                 </div>
               </motion.div>
