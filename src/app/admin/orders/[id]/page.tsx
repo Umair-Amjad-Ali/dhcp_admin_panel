@@ -50,7 +50,6 @@ export default function OrderDetailsPage() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Intel Column */}
         <div className="lg:col-span-8 flex flex-col gap-6">
            <ServiceDetailsCard order={order} />
            <LocationDetailsCard order={order} />
@@ -58,7 +57,6 @@ export default function OrderDetailsPage() {
            {review && <OrderReviewCard review={review} />}
         </div>
 
-        {/* Right Authority Column */}
         <div className="lg:col-span-4 space-y-6">
            <ClientInfoCard order={order} />
            <FinancialsCard order={order} />

@@ -41,7 +41,6 @@ export function RegistryLayout({
 
   return (
     <div className="space-y-6 pb-20 w-full overflow-hidden">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="flex flex-col gap-1">
           <h2 className="text-xl md:text-2xl font-black text-white tracking-tighter uppercase italic">
@@ -62,7 +61,6 @@ export function RegistryLayout({
         )}
       </div>
 
-      {/* Global Search */}
       {onSearchChange && searchPlaceholder && (
         <div className="relative group">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-700 group-focus-within:text-brand transition-colors">
@@ -78,11 +76,8 @@ export function RegistryLayout({
         </div>
       )}
 
-      {/* Main Content Render */}
       <div className="space-y-4">
         {children}
-
-        {/* Empty State */}
         {!loading && isEmpty && (
           <div className="py-20 flex flex-col items-center gap-4 opacity-50 text-slate-800">
             <Database size={40} />

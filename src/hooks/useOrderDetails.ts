@@ -24,8 +24,6 @@ export function useOrderDetails(id: string) {
 
   useEffect(() => {
     if (!id) return;
-
-    // Fetch Order
     const docRef = doc(db, "orders", id);
     const unsubOrder = onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -34,14 +32,12 @@ export function useOrderDetails(id: string) {
       }
     });
 
-    // Fetch Review for this Order
     const reviewsRef = collection(db, "reviews");
     const q = query(reviewsRef, where("orderId", "==", id), limit(1));
     const unsubReview = onSnapshot(q, async (snapshot) => {
       if (!snapshot.empty) {
         const reviewData = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() as any };
-        
-        // Fetch user profile for the review
+      
         if (reviewData.userId) {
           const userSnap = await getDoc(doc(db, "users", reviewData.userId));
           if (userSnap.exists()) {

@@ -23,7 +23,6 @@ export const FilterBar = () => {
 
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
-      {/* Search Input */}
       <div className="flex-1 relative group">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-brand transition-colors" size={16} />
         <input 
@@ -34,8 +33,6 @@ export const FilterBar = () => {
           className="w-full bg-card-bg border border-border-subtle rounded-2xl pl-11 pr-4 py-3 text-xs font-bold text-white placeholder:text-slate-600 focus:outline-none focus:border-brand/50 transition-all shadow-xl"
         />
       </div>
-
-      {/* Status Filter */}
       <div className="flex items-center gap-2">
         <div className="relative">
           <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
@@ -53,7 +50,6 @@ export const FilterBar = () => {
           </div>
         </div>
 
-        {/* Reset Button */}
         <button 
           onClick={resetFilters}
           className="p-3 bg-card-bg border border-border-subtle rounded-2xl text-slate-500 hover:text-red-500 hover:border-red-500/30 transition-all shadow-xl"

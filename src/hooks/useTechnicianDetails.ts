@@ -14,14 +14,12 @@ export function useTechnicianDetails(technicianId: string) {
 
     let unsubOrders: (() => void) | null = null;
 
-    // 1. Sync Technician Profile
     const techRef = doc(db, "technicians", technicianId);
     const unsubTech = onSnapshot(techRef, (snapshot) => {
       if (snapshot.exists()) {
         const techData = { id: snapshot.id, ...snapshot.data() };
         setTechnician(techData);
         
-        // 2. Sync Assigned Orders
         const ordersRef = collection(db, "orders");
         
         const setupOrderListener = () => {

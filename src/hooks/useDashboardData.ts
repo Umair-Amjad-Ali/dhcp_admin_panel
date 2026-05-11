@@ -74,12 +74,9 @@ export function useDashboardData() {
     
     if (timeframe === "all") {
       if (validOrders.length > 0) {
-        // Find the earliest date
         const dates = validOrders.map(o => o.createdAt?.toDate()).filter(d => !!d);
         const earliest = new Date(Math.min(...dates.map(d => d.getTime())));
-        const latest = new Date(); // Go up to today
-
-        // Fill ALL months from earliest to today with 0
+        const latest = new Date(); 
         let current = new Date(earliest.getFullYear(), earliest.getMonth(), 1);
         while (current <= latest) {
           const year = current.getFullYear();
@@ -91,7 +88,7 @@ export function useDashboardData() {
           current.setMonth(current.getMonth() + 1);
         }
 
-        // Fill in actual data
+
         validOrders.forEach(order => {
           const createdAt = order.createdAt?.toDate();
           if (createdAt) {
@@ -107,7 +104,7 @@ export function useDashboardData() {
         });
       }
     } else {
-      // Group by Day for 7d/30d
+      
       for (let i = daysToTrack - 1; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);

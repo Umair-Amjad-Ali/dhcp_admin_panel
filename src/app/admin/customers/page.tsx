@@ -68,7 +68,7 @@ export default function CustomersPage() {
                   className="group bg-card-bg border border-white/2 rounded-2xl p-4 hover:border-brand/30 transition-all hover:shadow-2xl hover:shadow-brand/5 relative"
                 >
                    <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-4">
-                      {/* Profile Identity Row */}
+                      {/* Profile  */}
                       <div className="col-span-4 w-full flex items-center justify-between lg:justify-start gap-4">
                          <div className="flex items-center gap-4 min-w-0">
                             <div className="h-10 w-10 shrink-0 rounded-xl bg-white/3 border border-white/5 flex items-center justify-center text-brand font-black text-xs group-hover:bg-brand group-hover:text-white transition-all shadow-inner">
@@ -83,7 +83,7 @@ export default function CustomersPage() {
                             </div>
                          </div>
 
-                         {/* Mobile Phone Badge (Hidden on Desktop) */}
+                         {/* Mobile Phone */}
                          <div className="lg:hidden flex items-center gap-1 px-2 py-1 rounded-lg bg-white/2 border border-white/5 text-slate-500">
                             <Phone size={8} className="text-slate-800" />
                             <span className="text-[7px] font-black tracking-tighter tabular-nums">{user.phone || "---"}</span>
@@ -96,7 +96,7 @@ export default function CustomersPage() {
                          <span className="text-[10px] font-black tabular-nums">{user.phone || "---"}</span>
                       </div>
 
-                      {/* Order Statistics Hub (Responsive) */}
+                      {/* Order Statistics Hub */}
                       <div className="col-span-3 w-full flex items-center justify-between lg:justify-start lg:gap-6 py-3 lg:py-0 border-y border-white/5 lg:border-none my-1 lg:my-0">
                          <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest">Order Pulse</div>
                          <div className="flex items-center gap-6">
@@ -106,7 +106,7 @@ export default function CustomersPage() {
                          </div>
                       </div>
 
-                      {/* Registry Date (Desktop Only) */}
+                      {/* Registry Date*/}
                       <div className="col-span-2 hidden lg:flex items-center gap-2 text-slate-600">
                          <Calendar size={12} className="text-slate-800" />
                          <span className="text-[9px] font-black uppercase tracking-widest">

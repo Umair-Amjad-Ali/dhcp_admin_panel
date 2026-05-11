@@ -61,17 +61,14 @@ export function useEditTechnician(technician: any, onSuccess: () => void) {
     try {
       const techRef = doc(db, "technicians", technician.id);
       
-      // 1. Update the technician document (Source of Truth)
       await updateDoc(techRef, {
         ...formData,
         updatedAt: serverTimestamp()
       });
 
-      // 2. Sync with orders if name or phone changed
       if (formData.name !== technician.name || formData.phone !== technician.phone) {
         toast.info("Synchronizing data across active orders...");
         
-        // Find orders where this technician is assigned
         const ordersRef = collection(db, "orders");
         const ordersQuery = query(
           ordersRef, 
@@ -90,8 +87,6 @@ export function useEditTechnician(technician: any, onSuccess: () => void) {
             });
           }
         });
-
-        // Also check the "orders" collection if it exists separately
         const ordersAltRef = collection(db, "orders");
         const ordersAltQuery = query(
           ordersAltRef,

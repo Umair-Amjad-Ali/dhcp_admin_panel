@@ -37,9 +37,7 @@ function LoginPageContent() {
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
       toast.success("Identity Verified");
-      // router.push("/admin/dashboard");
     } catch (error: any) {
-      // console.error("Login error:", error);
       toast.error("Invalid credentials.");
       setLoading(false);
     }

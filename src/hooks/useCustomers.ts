@@ -34,7 +34,6 @@ export function useCustomers(searchQuery?: string) {
   useEffect(() => {
     const activeLimit = debouncedSearch ? 150 : CHUNK_SIZE;
     
-    // Initial load
     const q = query(
       collection(db, "users"), 
       orderBy("createdAt", "desc"),

@@ -1,19 +1,15 @@
 import { NextResponse } from 'next/server';
 import * as admin from 'firebase-admin';
-
-// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
       projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      // Replace literal \n with actual newlines in private key
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     }),
   });
 }
 
-// Handle CORS for cross-origin requests from the client website
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
@@ -26,7 +22,6 @@ export async function OPTIONS() {
 }
 
 export async function POST(req: Request) {
-  // Setup standard CORS headers for responses
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -54,7 +49,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Save notification to Firestore so admin panel can detect it in real-time
     const db = admin.firestore();
     await db.collection('admin_notifications').add({
       title,
@@ -64,7 +58,6 @@ export async function POST(req: Request) {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    // Fetch all admin tokens from Firestore
     const tokensSnapshot = await db.collection('admin_fcm_tokens').get();
     
     if (tokensSnapshot.empty) {
@@ -82,8 +75,6 @@ export async function POST(req: Request) {
     if (tokens.length === 0) {
       return NextResponse.json({ message: 'Notification saved, no valid tokens' }, { status: 200, headers: corsHeaders });
     }
-
-    // Send the push notification
     const response = await admin.messaging().sendEachForMulticast({
       tokens,
       notification: {

@@ -69,7 +69,6 @@ export default function BlogsPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight">Content Hub</h1>
@@ -84,7 +83,6 @@ export default function BlogsPage() {
         </Button>
       </div>
 
-      {/* Filters & Search */}
       <div className="flex flex-col md:flex-row gap-4 items-center bg-card-bg/50 border border-border-subtle p-2 rounded-[2rem]">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
@@ -102,8 +100,6 @@ export default function BlogsPage() {
           </Badge>
         </div>
       </div>
-
-      {/* Blog Grid */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map(i => (
@@ -191,7 +187,6 @@ export default function BlogsPage() {
         </div>
       )}
 
-      {/* Editor Modal/Overlay */}
     </div>
   );
 }

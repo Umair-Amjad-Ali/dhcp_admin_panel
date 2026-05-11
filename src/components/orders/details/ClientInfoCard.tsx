@@ -38,7 +38,6 @@ export const ClientInfoCard = ({ order }: ClientInfoCardProps) => {
          </div>
 
           <div className="space-y-6">
-            {/* Section 1: Contact Info */}
             <div className="space-y-3">
                <h4 className="text-[9px] font-black text-slate-700 uppercase tracking-widest pl-1">Primary Contact Details</h4>
                <div className="space-y-3">
@@ -46,8 +45,6 @@ export const ClientInfoCard = ({ order }: ClientInfoCardProps) => {
                   <DetailItem icon={<Phone size={14} />} label="Phone Number" value={`${order.userDetails?.countryCode || ""} ${order.userDetails?.phone || order.phone || "No Phone"}`} />
                </div>
             </div>
-
-            {/* Section 2: Account Info */}
             {(order.userEmail || order.userDetails?.userEmail || order.userId || order.userDetails?.userId) && (
                <div className="space-y-3 pt-4 border-t border-white/5">
                   <h4 className="text-[9px] font-black text-slate-700 uppercase tracking-widest pl-1">Authentication Source</h4>

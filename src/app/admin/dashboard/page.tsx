@@ -36,7 +36,6 @@ export default function DashboardPage() {
     }
   }, [mounted, loading, timeframe]);
 
-  // FIXED: Comprehensive Shimmer State that matches the actual layout
   if (loading || !mounted) {
     return (
       <div className="space-y-6 pb-8 w-full overflow-hidden">
@@ -183,12 +182,10 @@ export default function DashboardPage() {
           </div>
         </Card>
 
-        {/* Top Services Bar Chart - REDESIGNED */}
         <Card className="xl:col-span-2 p-4 md:p-6 rounded-[2rem] bg-card-bg border-border-subtle shadow-2xl overflow-hidden w-full flex flex-col">
            <div className="mb-6 shrink-0">
             <h3 className="text-xs font-black text-white uppercase tracking-widest">Top Demanded Services</h3>
           </div>
-          {/* FIXED: Removed fixed barSize, using flex-1 to stretch chart fully */}
           <div className="flex-1 min-h-[240px] w-full">
             {chartReady ? (
               <ResponsiveContainer width="99%" height="100%">
@@ -201,7 +198,6 @@ export default function DashboardPage() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff03" horizontal={true} vertical={false} />
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 9 }} />
-                  {/* FIXED width to prevent pushing out of bounds on mobile */}
                   <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#fff', fontSize: 9, fontWeight: 800 }} width={85} />
                   <Tooltip 
                     cursor={{ fill: 'rgba(255,255,255,0.02)' }}
@@ -209,7 +205,7 @@ export default function DashboardPage() {
                     itemStyle={{ color: '#60a5fa' }}
                     labelStyle={{ color: '#94a3b8' }}
                   />
-                  {/* FIXED: maxBarSize lets Recharts stretch the bars nicely instead of squeezing them */}
+                 
                   <Bar 
                     dataKey="value" 
                     fill="url(#barGradient)" 
@@ -223,7 +219,6 @@ export default function DashboardPage() {
           </div>
         </Card>
 
-        {/* Live Activity */}
         <Card className="p-4 md:p-6 rounded-[2rem] bg-card-bg border-border-subtle flex flex-col shadow-2xl overflow-hidden w-full">
           <h3 className="text-xs font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2 shrink-0">
             <div className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />

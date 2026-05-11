@@ -48,7 +48,6 @@ export function useTechnicians(searchQuery?: string) {
       setTechnicians(data);
       setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
       
-      // If we are actively searching deep, hide the load more button
       setHasMore(!debouncedSearch && snapshot.docs.length === CHUNK_SIZE);
       setLoading(false);
     }, (err) => {

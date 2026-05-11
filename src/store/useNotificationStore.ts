@@ -33,7 +33,6 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
 
   addNotification: (notification) =>
     set((state) => {
-      // Check if notification already exists by ID
       if (notification.id && state.notifications.some(n => n.id === notification.id)) {
         return state;
       }

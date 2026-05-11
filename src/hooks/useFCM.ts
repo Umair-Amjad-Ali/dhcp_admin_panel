@@ -13,7 +13,6 @@ export const useFCM = () => {
   useEffect(() => {
     if (!adminUser) return;
 
-    // 1. Handle FCM Token Registration
     const requestPermissionAndSaveToken = async () => {
       try {
         console.log('FCM: Starting registration...');
@@ -24,8 +23,6 @@ export const useFCM = () => {
           console.warn('FCM: Permission not granted');
           return;
         }
-
-        // Manually register the service worker
         console.log('FCM: Registering Service Worker...');
         const swRegistration = await navigator.serviceWorker.register(
           '/firebase-messaging-sw.js'
@@ -55,8 +52,6 @@ export const useFCM = () => {
     };
 
     requestPermissionAndSaveToken();
-
-    // 2. Load existing notifications from Firestore
     const loadInitialNotifications = async () => {
       try {
         const qInitial = query(
@@ -83,8 +78,6 @@ export const useFCM = () => {
     };
 
     loadInitialNotifications();
-
-    // 3. Real-time Firestore Listener for New Notifications
     const q = query(
       collection(db, 'admin_notifications'),
       orderBy('createdAt', 'desc'),

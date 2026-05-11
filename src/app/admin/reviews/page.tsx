@@ -38,7 +38,6 @@ export default function ReviewsPage() {
 
   const { technicians } = useTechnicians();
 
-  // Map technician IDs to names for quick lookup
   const techMap = useMemo(() => {
     const map: Record<string, string> = {};
     technicians.forEach(tech => {
@@ -79,7 +78,6 @@ export default function ReviewsPage() {
         <ReviewShimmer />
       ) : (
         <>
-          {/* Summary Section */}
           {reviews.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               <div className="bg-card-bg border border-white/5 rounded-3xl p-5 flex items-center gap-4">
@@ -160,11 +158,9 @@ function ReviewCard({ review, technicianName }: { review: any, technicianName?: 
   
   return (
     <Card className="bg-card-bg border border-white/5 rounded-[2rem] p-7 flex flex-col h-full hover:border-amber-500/30 transition-all group relative overflow-hidden shadow-2xl">
-      {/* Dynamic Background Glow */}
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/5 blur-[80px] rounded-full pointer-events-none" />
       
       <div className="relative z-10 flex flex-col h-full">
-        {/* Header: Rating & Date */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl">
             <span className="text-sm font-black text-amber-500 italic">{review.rating}.0</span>
@@ -176,7 +172,6 @@ function ReviewCard({ review, technicianName }: { review: any, technicianName?: 
           </div>
         </div>
 
-        {/* Content: The Quote */}
         <div className="flex-1 mb-8">
           <div className="flex gap-3">
             <Quote size={16} className="text-amber-500/20 shrink-0 mt-1 rotate-180" />
@@ -186,7 +181,6 @@ function ReviewCard({ review, technicianName }: { review: any, technicianName?: 
           </div>
         </div>
 
-        {/* Footer: User & Order Info */}
         <div className="space-y-4 pt-6 border-t border-white/5">
           <div className="flex flex-col gap-3">
             <div className="flex items-start justify-between">
@@ -200,7 +194,6 @@ function ReviewCard({ review, technicianName }: { review: any, technicianName?: 
                   </span>
                   <span className="text-[8px] font-black text-slate-700 uppercase tracking-[0.2em] mt-0.5">Verified Client</span>
                   
-                  {/* Contact Meta */}
                   {(userDetails?.email || userDetails?.phoneNumber) && (
                     <div className="flex flex-col gap-1">
                       {userDetails?.email && (
@@ -222,7 +215,6 @@ function ReviewCard({ review, technicianName }: { review: any, technicianName?: 
             </div>
           </div>
 
-          {/* Service Tech Assignment */}
           <div className="flex items-center gap-3 bg-white/2 border border-white/5 p-3 rounded-2xl group/tech hover:bg-white/5 transition-colors">
             <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover/tech:border-amber-500/20 group-hover/tech:text-amber-500 transition-all">
               <Wrench size={12} />
@@ -237,7 +229,6 @@ function ReviewCard({ review, technicianName }: { review: any, technicianName?: 
         </div>
       </div>
 
-      {/* Decorative Background Icon */}
       <Star size={120} className="absolute -bottom-10 -right-10 text-amber-500/2 -rotate-12 pointer-events-none" />
     </Card>
   );

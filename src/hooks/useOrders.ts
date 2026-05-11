@@ -55,11 +55,7 @@ export function useOrders() {
         }
       }
 
-      // STANDARD/DEEP PATH: If no exact ID was found, run the query
       if (snapshotDocs.length === 0) {
-        
-        // DEEP SCAN: If searching, pull 150 records to ensure the local filter catches it.
-        // Otherwise, pull standard 10 for normal pagination.
         const activeLimit = currentSearch ? 150 : CHUNK_SIZE;
         
         let constraints: any[] = [orderBy("createdAt", "desc"), limit(activeLimit)];
@@ -76,7 +72,6 @@ export function useOrders() {
           constraints.unshift(where("createdAt", "<=", Timestamp.fromDate(endDate)));
         }
 
-        // Only use pagination cursor if we are NOT currently running a deep search
         if (getNext && lastDoc && !currentSearch) {
           constraints.push(startAfter(lastDoc));
         }
@@ -92,20 +87,17 @@ export function useOrders() {
       }));
 
       if (getNext && !currentSearch) {
-        // Append unique orders if loading more
         setOrders(prev => {
           const existingIds = new Set(prev.map(o => o.id));
           const uniqueNew = newOrders.filter(o => !existingIds.has(o.id));
           return [...prev, ...uniqueNew];
         });
       } else {
-        // Replace entirely if fresh fetch or search
         setOrders(newOrders);
       }
 
       setLastDoc(snapshotDocs[snapshotDocs.length - 1] || null);
-      
-      // Disable the "Load More" button if we are currently searching
+    
       setHasMore(!currentSearch && snapshotDocs.length === CHUNK_SIZE);
       
     } catch (err) {
@@ -116,12 +108,10 @@ export function useOrders() {
     }
   }, [dateFilter, lastDoc]);
 
-  // 3. TRIGGER: Run when dates or search changes
   useEffect(() => {
     fetchOrders(false, dateFilter, debouncedSearch);
   }, [dateFilter.start, dateFilter.end, debouncedSearch]);
 
-  // 4. LOCAL FILTER: Refine the large fetched chunk down to exactly what the user typed
   const filteredOrders = useMemo(() => {
     return orders.filter(order => {
       const name = order.userDetails?.name?.toLowerCase() || "";

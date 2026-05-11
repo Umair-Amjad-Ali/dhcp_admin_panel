@@ -45,7 +45,6 @@ export function useReviews() {
         ...doc.data()
       }));
 
-      // Enhanced Sync: Fetch unique user profiles in parallel
       const uniqueUserIds = Array.from(new Set(rawReviews.map((r: any) => r.userId).filter(Boolean)));
       const userProfiles: Record<string, any> = {};
       

@@ -34,7 +34,6 @@ export const DateFilterHub = ({ dateFilter, setDateFilter }: DateFilterHubProps)
 
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-card-bg border border-white/5 p-1.5 rounded-2xl shadow-2xl relative w-full sm:w-auto">
-      {/* Mode Selectors */}
       <div className="flex items-center gap-1 bg-black/20 p-1 rounded-xl border border-white/5 w-full sm:w-auto justify-between sm:justify-start">
         <button
           onClick={() => {
@@ -61,8 +60,6 @@ export const DateFilterHub = ({ dateFilter, setDateFilter }: DateFilterHubProps)
           <CalendarRange size={12} /> Range
         </button>
       </div>
-
-      {/* Input Area */}
       <div className="overflow-hidden w-full sm:w-auto">
         <AnimatePresence mode="wait">
           {dateMode === "single" && (
@@ -115,8 +112,6 @@ export const DateFilterHub = ({ dateFilter, setDateFilter }: DateFilterHubProps)
           )}
         </AnimatePresence>
       </div>
-
-      {/* Clear Button */}
       <AnimatePresence>
         {(dateFilter.start || dateFilter.end) && (
           <motion.button 

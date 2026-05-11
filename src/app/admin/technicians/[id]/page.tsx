@@ -30,19 +30,13 @@ export default function TechnicianDetailsPage() {
   const router = useRouter();
   const { technician, orders, loading } = useTechnicianDetails(id as string);
 
-  // Real-time calculation of technician performance metrics
-  // FIXED: Moved before early returns to satisfy Rules of Hooks
   const performanceStats = React.useMemo(() => {
     const total = orders.length;
     const completed = orders.filter(o => o.status?.toLowerCase() === "completed").length;
     const cancelled = orders.filter(o => o.status?.toLowerCase() === "cancelled" || o.status?.toLowerCase() === "rejected").length;
-    
-    // Efficiency: Ratio of completed to closed (completed + cancelled)
     const efficiency = (completed + cancelled) > 0 
       ? Math.round((completed / (completed + cancelled)) * 100) 
       : 0;
-
-    // Growth/Performance: % of total assigned orders that are completed
     const performance = total > 0 
       ? Math.round((completed / total) * 100) 
       : 0;
@@ -74,7 +68,6 @@ export default function TechnicianDetailsPage() {
 
   return (
     <div className="space-y-8 pb-20">
-      {/* Navigation & Header */}
       <div className="flex items-center gap-4">
          <button onClick={() => router.back()} className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-all">
             <ArrowLeft size={20} />
@@ -86,7 +79,6 @@ export default function TechnicianDetailsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Profile Card */}
         <Card className="lg:col-span-1 p-6 bg-card-bg border-white/3 rounded-[2rem] flex flex-col justify-between overflow-hidden relative">
            <div className="absolute -top-10 -right-10 text-brand/5">
               <ShieldCheck size={200} strokeWidth={1} />
@@ -143,7 +135,6 @@ export default function TechnicianDetailsPage() {
            </div>
         </Card>
 
-        {/* Stats Grid */}
         <div className="lg:col-span-2 flex flex-col gap-6">
            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <MetricBox 
@@ -166,7 +157,6 @@ export default function TechnicianDetailsPage() {
               />
            </div>
 
-           {/* Active Deployment */}
            {(technician.activeJobsCount || 0) > 0 && (
               <Card className="p-6 bg-amber-500/5 border-amber-500/10 rounded-3xl relative overflow-hidden group">
                  <div className="absolute top-0 right-0 p-8 text-amber-500/5 group-hover:rotate-12 transition-transform">
@@ -190,8 +180,6 @@ export default function TechnicianDetailsPage() {
            )}
         </div>
       </div>
-
-      {/* Mission History */}
       <div className="space-y-4">
          <div className="flex items-center justify-between px-4">
             <h3 className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em]">Fleet Mission History</h3>
@@ -217,7 +205,6 @@ export default function TechnicianDetailsPage() {
                       className="group block bg-card-bg border border-white/2 rounded-2xl p-4 hover:border-brand/30 transition-all hover:shadow-2xl"
                     >
                         <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-4">
-                           {/* Mission Profile Item */}
                            <div className="col-span-6 w-full flex items-center justify-between lg:justify-start gap-4">
                               <div className="flex items-center gap-4 min-w-0">
                                  <div className="h-10 w-10 shrink-0 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center text-slate-500 group-hover:text-brand transition-colors shadow-inner">
@@ -234,7 +221,6 @@ export default function TechnicianDetailsPage() {
                                     </p>
                                  </div>
                               </div>
-                              {/* Mobile Date Badge */}
                               <div className="lg:hidden flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/2 border border-white/5 text-slate-500">
                                  <Clock size={8} className="text-slate-800" />
                                  <span className="text-[7px] font-black uppercase tabular-nums">
@@ -243,15 +229,12 @@ export default function TechnicianDetailsPage() {
                               </div>
                            </div>
 
-                           {/* Registry Log (Desktop) */}
                            <div className="col-span-3 hidden lg:block">
                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest text-right italic">Registry Log</p>
                               <p className="text-[10px] font-bold text-white tabular-nums mt-0.5 text-right">
                                  {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : "N/A"}
                               </p>
                            </div>
-
-                           {/* Operation Pulse Hub */}
                            <div className="col-span-3 w-full flex items-center justify-between lg:justify-end gap-6 pt-3 lg:pt-0 border-t border-white/5 lg:border-none mt-1 lg:mt-0">
                               <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest">Mission Pulse</div>
                               <div className="flex items-center gap-4">

@@ -39,14 +39,12 @@ export default function BlogIndexPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
-      {/* Decorative Background */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 -left-1/4 w-[1000px] h-[1000px] bg-blue-600/10 rounded-full blur-[160px]" />
         <div className="absolute bottom-0 -right-1/4 w-[800px] h-[800px] bg-indigo-600/5 rounded-full blur-[140px]" />
       </div>
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-20 md:py-32">
-        {/* Hero Section */}
         <div className="max-w-3xl mb-20 md:mb-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -68,7 +66,6 @@ export default function BlogIndexPage() {
           </motion.div>
         </div>
 
-        {/* Blog Grid */}
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => (
@@ -87,7 +84,6 @@ export default function BlogIndexPage() {
                 className="group flex flex-col"
               >
                 <Link href={`/blog/${blog.slug}`} className="flex-1 flex flex-col">
-                  {/* Text Container */}
                   <div className="flex-1 space-y-6">
                     <div className="flex items-center gap-4 text-slate-500 text-[10px] font-black uppercase tracking-widest">
                       <span className="flex items-center gap-2">
@@ -137,7 +133,6 @@ export default function BlogIndexPage() {
         )}
       </main>
 
-      {/* Footer / CTA */}
       <footer className="relative z-10 py-20 border-t border-white/5 bg-black/40 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-4">

@@ -14,19 +14,15 @@ export function useCustomerDetails(customerId: string) {
 
     let unsubOrders: (() => void) | null = null;
 
-    // 1. Sync Customer Profile
     const userRef = doc(db, "users", customerId);
     const unsubUser = onSnapshot(userRef, (snapshot) => {
       if (snapshot.exists()) {
         const userData = { id: snapshot.id, ...(snapshot.data() as any) };
         setCustomer(userData);
-        
-        // 2. Discover and Sync Orders using userId (Perfect Matching)
         const ordersRef = collection(db, "orders");
         
         const setupOrderListener = () => {
           try {
-            // We use customerId directly as it represents the userId in orders
             const q = query(
               ordersRef, 
               where("userId", "==", customerId),
@@ -43,7 +39,6 @@ export function useCustomerDetails(customerId: string) {
               setLoading(false);
             }, (err) => {
               console.warn("Complex query failed for orders, falling back to simple match.", err);
-              // Clean up previous listener before starting fallback
               unsubOrders?.();
               
               const simpleQ = query(
@@ -52,7 +47,6 @@ export function useCustomerDetails(customerId: string) {
                 limit(50)
               );
               
-              // Correctly track the fallback listener with error handling
               unsubOrders = onSnapshot(simpleQ, (s) => {
                  setOrders(s.docs.map(d => ({id: d.id, ...d.data()})));
                  setLoading(false);

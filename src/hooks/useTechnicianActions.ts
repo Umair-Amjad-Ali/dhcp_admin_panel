@@ -16,7 +16,6 @@ export function useTechnicianActions() {
         updatedAt: serverTimestamp()
       };
 
-      // Logic check for Activation: Should they be Active or Busy?
       if (newStatus === "active") {
         const ordersRef = collection(db, "orders");
         const q = query(

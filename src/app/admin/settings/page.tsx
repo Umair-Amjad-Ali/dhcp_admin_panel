@@ -26,7 +26,6 @@ export default function SettingsPage() {
     handleChangePassword
   } = useAdminSettings();
 
-  // --- SHIMMER LOADING STATE ---
   if (loading) {
     return (
       <div className="space-y-6 pb-20 w-full">
@@ -48,7 +47,6 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 pb-20 w-full">
-      {/* Header */}
       <div className="flex flex-col gap-1">
         <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic">
           Security Settings <span className="text-brand">.</span>
@@ -61,7 +59,6 @@ export default function SettingsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8"
       >
-        {/* LEFT COLUMN - FORM */}
         <div className="lg:col-span-2">
           <Card className="p-6 md:p-8 rounded-[2rem] bg-card-bg border-border-subtle shadow-2xl border">
             <div className="mb-8">
@@ -74,7 +71,6 @@ export default function SettingsPage() {
 
             <form onSubmit={handleChangePassword} className="space-y-6">
               
-              {/* Current Password Field */}
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Current Password</label>
                 <div className="relative">
@@ -99,15 +95,13 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Divider */}
               <div className="flex items-center gap-4 py-2">
                 <div className="h-px flex-1 bg-white/5" />
                 <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">New Secure Entry</span>
                 <div className="h-px flex-1 bg-white/5" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* New Password Field */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">\
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">New Password</label>
                   <div className="relative">
@@ -131,8 +125,6 @@ export default function SettingsPage() {
                     </button>
                   </div>
                 </div>
-
-                {/* Confirm Password Field */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm Password</label>
                   <div className="relative">
@@ -175,7 +167,6 @@ export default function SettingsPage() {
           </Card>
         </div>
 
-        {/* RIGHT COLUMN - INFO CARDS */}
         <div className="lg:col-span-1 flex flex-col gap-6">
           
           <Card className="p-6 rounded-[2rem] bg-card-bg border-border-subtle shadow-2xl bg-linear-to-br from-card-bg to-amber-500/5">

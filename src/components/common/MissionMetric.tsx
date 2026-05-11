@@ -65,7 +65,6 @@ export const MissionMetric = ({
     );
   }
 
-  // Default 'card' variant (Customer Details/Profile style)
   return (
     <Card className={cn(
       "p-6 bg-card-bg border-white/3 rounded-[2rem] flex flex-col items-center justify-center text-center group hover:border-brand/20 transition-all overflow-hidden",

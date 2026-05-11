@@ -48,7 +48,6 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30">
-      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link 
@@ -66,7 +65,6 @@ export default async function BlogPostPage({ params }: Props) {
 
       <main className="pt-32 pb-20 px-6 max-w-4xl mx-auto">
         <article>
-          {/* Header */}
           <header className="mb-16">
             <div className="flex items-center gap-4 text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
               <span>Published by Expert</span>
@@ -103,14 +101,11 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </header>
 
-          {/* Content */}
           <div 
             className="blog-content max-w-none"
             dangerouslySetInnerHTML={{ __html: blog.content }}
           />
         </article>
-
-        {/* Footer Navigation */}
         <div className="mt-20 pt-10 border-t border-white/5 flex justify-center">
           <Link 
             href="/blog"

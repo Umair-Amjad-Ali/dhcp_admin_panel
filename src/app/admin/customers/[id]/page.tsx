@@ -174,7 +174,7 @@ export default function CustomerDetailsPage() {
                               </p>
                            </div>
 
-                           {/* Status & Control Hub (Mobile Optimized) */}
+                           {/* Status & Control Hub */}
                            <div className="col-span-3 w-full flex items-center justify-between lg:justify-end gap-6 pt-3 lg:pt-0 border-t border-white/5 lg:border-none mt-1 lg:mt-0">
                               <div className="lg:hidden text-[7px] font-black text-slate-700 uppercase tracking-widest">Job Pulse</div>
                               <div className="flex items-center gap-4">

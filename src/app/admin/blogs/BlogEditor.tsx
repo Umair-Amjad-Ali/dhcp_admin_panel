@@ -49,7 +49,7 @@ interface BlogEditorProps {
   onClose?: () => void;
 }
 
-// Toolbar Button Component
+
 function ToolbarButton({ 
   onClick, 
   isActive = false, 
@@ -197,8 +197,8 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
 
   return (
     <div className="bg-page-bg flex flex-col -m-4 md:-m-6 lg:-m-8 pb-20">
-      {/* Editor Header */}
-      <div className="flex items-center justify-between px-6 pt-10 pb-6 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl shrink-0">
+   
+      <div className="flex items-center justify-between px-6 pt-10 pb-6 border-b border-white/5 bg-page-bg/80 backdrop-blur-xl shrink-0">
         <div className="flex items-center gap-4">
           <button 
             onClick={handleClose}
@@ -234,10 +234,8 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
       </div>
 
       <div>
-        {/* Editor Content Area */}
         <div className="w-full px-6 md:px-12 py-10">
           <form className="w-full space-y-12" onSubmit={handleSubmit}>
-            {/* Title Section */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-blue-500">
                 <Type size={16} />
@@ -252,13 +250,12 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
               />
             </div>
 
-            {/* Config Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-white/5">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">
                   <Globe size={12} /> URL Slug
                 </label>
-                <div className="flex items-center gap-2 bg-[#0f172a] border border-white/5 rounded-xl px-4 py-2 text-slate-500">
+                <div className="flex items-center gap-2 bg-card-bg border border-white/5 rounded-xl px-4 py-2 text-slate-500">
                   <span className="text-xs">/blog/</span>
                   <input 
                     type="text"
@@ -282,7 +279,6 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
               </div>
             </div>
 
-            {/* Meta Description */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">
                 <Hash size={12} /> SEO Meta Description
@@ -292,22 +288,18 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
                 onChange={(e) => setFormData(prev => ({ ...prev, metaDescription: e.target.value }))}
                 placeholder="Write a brief summary for search results (max 160 characters)..."
                 rows={2}
-                className="w-full bg-[#0f172a] border border-white/5 rounded-xl px-4 py-3 text-xs font-medium text-slate-400 focus:border-blue-500/50 transition-all outline-none resize-none"
+                className="w-full bg-card-bg border border-white/5 rounded-xl px-4 py-3 text-xs font-medium text-slate-400 focus:border-blue-500/50 transition-all outline-none resize-none"
               />
             </div>
 
-            {/* Rich Text Editor */}
             <div className="space-y-4 pt-6 border-t border-white/5">
               <div className="flex items-center gap-2 text-slate-500 mb-2">
                 <FileText size={16} />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em]">Body Content</span>
               </div>
 
-              {/* TipTap Toolbar */}
               {editor && (
-                <div className="sticky top-0 z-[100] bg-page-bg border border-white/5 rounded-t-2xl p-3 flex flex-wrap gap-1 items-center shadow-2xl">
-                  {/* Headings, formatting, lists, etc... same content */}
-                  {/* Headings */}
+                <div className="sticky top-0 z-100 bg-page-bg border border-white/5 rounded-t-2xl p-3 flex flex-wrap gap-1 items-center shadow-2xl">
                   <ToolbarButton 
                     onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} 
                     isActive={editor.isActive("heading", { level: 1 })}
@@ -331,8 +323,6 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
                   </ToolbarButton>
 
                   <div className="w-px h-6 bg-white/10 mx-1" />
-
-                  {/* Text Formatting */}
                   <ToolbarButton 
                     onClick={() => editor.chain().focus().toggleBold().run()} 
                     isActive={editor.isActive("bold")}
@@ -363,8 +353,6 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
                   </ToolbarButton>
 
                   <div className="w-px h-6 bg-white/10 mx-1" />
-
-                  {/* Lists */}
                   <ToolbarButton 
                     onClick={() => editor.chain().focus().toggleBulletList().run()} 
                     isActive={editor.isActive("bulletList")}
@@ -382,7 +370,6 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
 
                   <div className="w-px h-6 bg-white/10 mx-1" />
 
-                  {/* Block elements */}
                   <ToolbarButton 
                     onClick={() => editor.chain().focus().toggleBlockquote().run()} 
                     isActive={editor.isActive("blockquote")}
@@ -406,7 +393,6 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
 
                   <div className="w-px h-6 bg-white/10 mx-1" />
 
-                  {/* Undo/Redo */}
                   <ToolbarButton 
                     onClick={() => editor.chain().focus().undo().run()} 
                     title="Undo"
@@ -422,16 +408,13 @@ export default function BlogEditor({ blog, onClose }: BlogEditorProps) {
                 </div>
               )}
 
-              {/* TipTap Editor Content */}
-              <div className="bg-[#0f172a]/30 border border-white/5 border-t-0 rounded-b-2xl overflow-hidden">
+              <div className="bg-card-bg/30 border border-white/5 border-t-0 rounded-b-2xl overflow-hidden">
                 <EditorContent editor={editor} />
               </div>
             </div>
           </form>
       </div>
     </div>
-
-      {/* TipTap Global Styles */}
       <style jsx global>{`
         .tiptap {
           min-height: 400px;

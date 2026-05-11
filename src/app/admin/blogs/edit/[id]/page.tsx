@@ -32,8 +32,8 @@ export default function EditBlogPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#020617] flex flex-col p-6 md:p-12 space-y-12">
-        {/* Header Shimmer */}
+      <div className="min-h-screen bg-page-bg flex flex-col p-6 md:p-12 space-y-12">
+     
         <div className="flex justify-between items-center animate-pulse">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-white/5 rounded-xl" />
@@ -47,8 +47,7 @@ export default function EditBlogPage() {
             <div className="w-32 h-12 bg-white/5 rounded-xl" />
           </div>
         </div>
-
-        {/* Content Shimmer */}
+       
         <div className="max-w-4xl space-y-12 animate-pulse">
           <div className="space-y-4">
             <div className="w-32 h-4 bg-white/5 rounded" />

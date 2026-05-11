@@ -19,7 +19,7 @@ interface StatusDropdownProps {
 
 const statuses = [
   { id: "pending", label: "Pending", icon: Clock, color: "text-amber-500" },
-  { id: "in-progress", label: "In Progress", icon: PlayCircle, color: "text-blue-500" }, // Changed to Blue for progression
+  { id: "in-progress", label: "In Progress", icon: PlayCircle, color: "text-blue-500" }, 
   { id: "completed", label: "Completed", icon: CheckCircle2, color: "text-emerald-500" },
   { id: "cancelled", label: "Cancelled", icon: XCircle, color: "text-rose-500" },
 ];
